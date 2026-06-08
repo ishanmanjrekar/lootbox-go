@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Lootbox Go</string>
+    <string name="title_activity_main">Lootbox Go</string>
+    <string name="package_name">com.lootbox.go</string>
+    <string name="custom_url_scheme">com.lootbox.go</string>
+</resources>
