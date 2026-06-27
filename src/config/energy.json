@@ -1,0 +1,23 @@
+{
+  "maxEnergy": 10,
+  "startingEnergy": 10,
+  "rechargeIntervalSeconds": 120,
+  "costPerOpen": 1,
+  "startingPinatas": 100,
+  "refillOptions": [
+    {
+      "energyAmount": 5,
+      "pinataCost": 10
+    },
+    {
+      "energyAmount": 15,
+      "pinataCost": 20
+    },
+    {
+      "energyAmount": 50,
+      "pinataCost": 30
+    }
+  ],
+  "koFiTipPinatas": 100,
+  "koFiTipUrl": "https://ko-fi.com/ishanmanjrekar/tip"
+}

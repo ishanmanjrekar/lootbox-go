@@ -1,0 +1,126 @@
+{
+  "pitySystem": {
+    "baseWeight": 1,
+    "weightIncrementPerMiss": 3,
+    "earlyGameBaseWeight": 200,
+    "earlyGameMaxLevel": 5
+  },
+  "onboardingRiggedSequence": [
+    {
+      "step": 0,
+      "dropType": "xp_percentage",
+      "value": 0.80,
+      "variationRange": 0.10,
+      "description": "Rigged pull 1: 80% XP to level up"
+    },
+    {
+      "step": 1,
+      "dropType": "xp_percentage",
+      "value": 0.20,
+      "variationRange": 0.10,
+      "forceLevelUp": true,
+      "description": "Rigged pull 2: 20% XP, forcing level up to Lvl 2"
+    },
+    {
+      "step": 2,
+      "dropType": "xp_percentage",
+      "value": 0.30,
+      "variationRange": 0.10,
+      "description": "Rigged pull 3: 30% XP of Level 2 requirement"
+    },
+    {
+      "step": 3,
+      "dropType": "box_unlock",
+      "value": "random",
+      "description": "Rigged pull 4: Guaranteed new random box skin"
+    },
+    {
+      "step": 4,
+      "dropType": "xp_percentage",
+      "value": 0.35,
+      "variationRange": 0.05,
+      "description": "Rigged pull 5: 35% XP of Level 2 requirement"
+    },
+    {
+      "step": 5,
+      "dropType": "xp_percentage",
+      "value": 0.35,
+      "variationRange": 0.05,
+      "forceLevelUp": true,
+      "description": "Rigged pull 6: 35% XP, forcing level up to Lvl 3"
+    }
+  ],
+  "standardDropTable": [
+    {
+      "id": "skin_unlock",
+      "type": "box_unlock",
+      "value": "random",
+      "weight": 1,
+      "description": "Base weight 1, becomes 200 if Level <= 5, grows by +3 on consecutive misses"
+    },
+    {
+      "id": "xp_45",
+      "type": "xp_percentage",
+      "value": 0.45,
+      "variationRange": 0.05,
+      "weight": 19,
+      "description": "45% of next level's XP"
+    },
+    {
+      "id": "xp_30",
+      "type": "xp_percentage",
+      "value": 0.30,
+      "variationRange": 0.05,
+      "weight": 30,
+      "description": "30% of next level's XP"
+    },
+    {
+      "id": "xp_20",
+      "type": "xp_percentage",
+      "value": 0.20,
+      "variationRange": 0.05,
+      "weight": 50,
+      "description": "20% of next level's XP"
+    },
+    {
+      "id": "xp_18",
+      "type": "xp_percentage",
+      "value": 0.18,
+      "variationRange": 0.05,
+      "weight": 100,
+      "description": "18% of next level's XP"
+    },
+    {
+      "id": "xp_15",
+      "type": "xp_percentage",
+      "value": 0.15,
+      "variationRange": 0.05,
+      "weight": 100,
+      "description": "15% of next level's XP"
+    },
+    {
+      "id": "xp_12",
+      "type": "xp_percentage",
+      "value": 0.12,
+      "variationRange": 0.05,
+      "weight": 200,
+      "description": "12% of next level's XP"
+    },
+    {
+      "id": "xp_10",
+      "type": "xp_percentage",
+      "value": 0.10,
+      "variationRange": 0.05,
+      "weight": 200,
+      "description": "10% of next level's XP"
+    },
+    {
+      "id": "xp_8",
+      "type": "xp_percentage",
+      "value": 0.08,
+      "variationRange": 0.05,
+      "weight": 300,
+      "description": "8% of next level's XP"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "baseXP": 100,
+  "multiplier": 1.5,
+  "exponent": 1.2,
+  "formulaType": "exponential",
+  "levelVisuals": [
+    { "level": 1, "tier": "Bronze", "badgeColor": "#cd7f32", "glow": "none" },
+    { "level": 5, "tier": "Silver", "badgeColor": "#c0c0c0", "glow": "silver-pulse" },
+    { "level": 10, "tier": "Gold", "badgeColor": "#ffd700", "glow": "gold-sparkle" },
+    { "level": 25, "tier": "Diamond", "badgeColor": "#b9f2ff", "glow": "rainbow-shimmer" }
+  ]
+}

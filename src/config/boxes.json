@@ -1,0 +1,59 @@
+{
+  "boxes": [
+    {
+      "id": "box-start",
+      "name": "Cozy Cardboard Box",
+      "description": "The first box given to you for free. Wrapped in packing tape and minor expectations."
+    },
+    {
+      "id": "box-1",
+      "name": "Teddy Bear Bronze Crate",
+      "description": "A chocolate-bronze crate adorned with fluffy teddy bear ears. Adorable, but guaranteed to contain useless items."
+    },
+    {
+      "id": "box-2",
+      "name": "Cyber Kitty Neon Vault",
+      "description": "A gaming console box styled like a cute kitty, complete with pink LED whiskers. 400% more energy-consuming."
+    },
+    {
+      "id": "box-3",
+      "name": "Crowned Piggy Gold Safe",
+      "description": "A golden safe styled like a crowned royal piggy bank. Smells of corporate bonuses and player tears."
+    },
+    {
+      "id": "box-4",
+      "name": "Dopamine Diamond Box",
+      "description": "A glittering pastel crystal crate designed to refract light into standard dopamine-inducing patterns."
+    },
+    {
+      "id": "box-5",
+      "name": "Pinata Party Chest",
+      "description": "Overflowing with paper fringe and absolute emptiness."
+    },
+    {
+      "id": "box-6",
+      "name": "FOMO Fortified Safe",
+      "description": "Equipped with real-time countdown timers that do absolutely nothing. Panic-buying not included."
+    },
+    {
+      "id": "box-7",
+      "name": "Crypto Moon Rocket",
+      "description": "A rocket-shaped container propelled by hype and burning graphics cards. Smells like virtual regret."
+    },
+    {
+      "id": "box-8",
+      "name": "Corporate Pizza Party Box",
+      "description": "A greasy cardboard pizza box awarded in lieu of a raise. Guaranteed to contain cold disappointment."
+    },
+    {
+      "id": "box-9",
+      "name": "Gacha Waifu Capsule",
+      "description": "A giant pastel-colored capsule with cat ears and blushing cheeks. 99.9% chance of duplicates."
+    },
+    {
+      "id": "box-10",
+      "name": "Unicorn Sparkle Closet",
+      "description": "A magical wardrobe decorated with pink glitter and sticker stars. Where your life savings go to hide fabulously!"
+    }
+  ]
+}
