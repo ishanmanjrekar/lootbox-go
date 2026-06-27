@@ -159,6 +159,9 @@ function App() {
 
   // Handle Level Badge Tapping (Triple tap opens Debug Panel)
   const handleLevelBadgeTap = () => {
+    if (import.meta.env.VITE_DISABLE_DEBUG === 'true') {
+      return;
+    }
     const now = Date.now();
     if (now - lastTapRef.current < 450) {
       const newCount = tapCount + 1;
@@ -910,7 +913,9 @@ function App() {
         <StoreModal isOpen={isStoreOpen} onClose={() => setIsStoreOpen(false)} />
 
         {/* Modal: Debug Operations cheat sheet */}
-        <DebugPanel isOpen={isDebugOpen} onClose={() => setIsDebugOpen(false)} />
+        {import.meta.env.VITE_DISABLE_DEBUG !== 'true' && (
+          <DebugPanel isOpen={isDebugOpen} onClose={() => setIsDebugOpen(false)} />
+        )}
 
         {/* Modal: celebratory Level Up */}
         <LevelUpOverlay

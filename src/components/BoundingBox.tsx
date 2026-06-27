@@ -9,12 +9,16 @@ interface GameLayerProps {
 export const BoundingBox: React.FC<GameLayerProps> = ({ width, height, children }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [isCapacitor, setIsCapacitor] = useState(false);
+  const [isFluidLayout, setIsFluidLayout] = useState(false);
 
   useLayoutEffect(() => {
-    // Detect if running inside the Capacitor native WebView shell
+    // Detect if running inside the Capacitor native WebView shell or a mobile/tablet browser
     const checkCapacitor = (window as any).Capacitor !== undefined;
-    setIsCapacitor(checkCapacitor);
+    const checkMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      (navigator.maxTouchPoints > 0 && window.innerWidth <= 800);
+    
+    const isFluid = checkCapacitor || checkMobile;
+    setIsFluidLayout(isFluid);
 
     const handleResize = () => {
       if (containerRef.current) {
@@ -33,11 +37,11 @@ export const BoundingBox: React.FC<GameLayerProps> = ({ width, height, children 
         const availW = Math.min(clientWidth || window.innerWidth, realScreenW);
         const availH = Math.min(clientHeight || window.innerHeight, realScreenH);
 
-        if (checkCapacitor) {
-          // Native Android APK: 100% fluid full-screen borderless layout
+        if (isFluid) {
+          // Full-screen fluid layout
           setScale(1);
         } else {
-          // Standard Web/Itch.io: EXACT original scaling logic to prevent any regression
+          // Standard Web/Itch.io desktop: scale simulated phone viewport
           const scaleX = availW / width;
           const scaleY = availH / height;
           setScale(Math.min(scaleX, scaleY));
@@ -55,8 +59,8 @@ export const BoundingBox: React.FC<GameLayerProps> = ({ width, height, children 
     };
   }, [width, height]);
 
-  // Capacitor runs borderless and fluid; Web uses simulated phone sizing
-  const innerStyle: React.CSSProperties = isCapacitor
+  // Fluid layouts run borderless and fluid; Web desktop uses simulated phone sizing
+  const innerStyle: React.CSSProperties = isFluidLayout
     ? {
         width: '100%',
         height: '100%',

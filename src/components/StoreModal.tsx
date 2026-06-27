@@ -9,7 +9,18 @@ interface StoreModalProps {
 }
 
 export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose }) => {
-  const { pinatas, buyEnergy, claimKoFiPinatas } = useGameStore();
+  const { pinatas, buyEnergy, claimKoFiPinatas, devCheatReset } = useGameStore();
+
+  const handlePinataIconClick = () => {
+    if (import.meta.env.VITE_DISABLE_DEBUG === 'true') {
+      const confirmReset = window.confirm('Are you sure you want to reset your progress? This will reset your level, unlocked boxes, and resources.');
+      if (confirmReset) {
+        devCheatReset();
+        onClose();
+        alert('Progress reset successfully!');
+      }
+    }
+  };
 
   const handleBuyRefill = (amount: number, cost: number) => {
     const success = buyEnergy(amount, cost);
@@ -178,7 +189,16 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose }) => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <img src={pinataIcon} alt="Pinata" style={{ width: '28px', height: '28px' }} />
+                <img
+                  src={pinataIcon}
+                  alt="Pinata"
+                  onClick={handlePinataIconClick}
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    cursor: import.meta.env.VITE_DISABLE_DEBUG === 'true' ? 'pointer' : 'default',
+                  }}
+                />
                 <span className="title-bubble" style={{ fontSize: '20px', textShadow: 'none', color: '#FFFDF9' }}>
                   NEED MORE PINATAS?
                 </span>

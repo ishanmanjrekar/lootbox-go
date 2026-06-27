@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:web": "vite build",
-    "build:itch": "vite build && cd dist && npx bestzip ../dump/game-upload.zip *",
+    "build:itch": "vite build --mode itch && cd dist && npx bestzip ../dump/game-upload.zip *",
     "build:mobile": "vite build && npx cap sync",
     "lint": "eslint .",
     "preview": "vite preview"
