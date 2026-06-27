@@ -20,19 +20,16 @@ public/
       │     ├── reward_reveal.mp3
       │     └── level_up.mp3
       └── boxes/
-            ├── default_cardboard/
-            │     ├── closed.png
-            │     └── open.png
-            ├── bronze_deluxe_box/
-            │     ├── closed.png
-            │     └── open.png
-            └── [box-id]/
-                  ├── closed.png
-                  └── open.png
+            ├── box-default_cardboard-closed.png
+            ├── box-default_cardboard-open.png
+            ├── box-bronze_deluxe_box-closed.png
+            ├── box-bronze_deluxe_box-open.png
+            ├── box-[box-id]-closed.png
+            └── box-[box-id]-open.png
 ```
 
 - **Audio folder:** Static audio feedback files used across the interface.
-- **Boxes folder:** Each box must have its own sub-directory matching the unique ID defined in the configuration JSON.
+- **Boxes folder:** Contains the visual assets for each lootbox skin, named following the pattern `box-[box-id]-[state].png`.
 
 ---
 
@@ -81,7 +78,7 @@ Since box assets are placed in the `public/` directory, they are served as stati
  * Since files are placed in public/, they map to absolute root paths.
  */
 export const getBoxAssetUrl = (boxId: string, state: 'closed' | 'open'): string => {
-  return `/assets/boxes/${boxId}/${state}.png`;
+  return `/assets/boxes/box-${boxId}-${state}.png`;
 };
 ```
 
@@ -92,8 +89,8 @@ export const getBoxAssetUrl = (boxId: string, state: 'closed' | 'open'): string 
 To add a new themed skin to the game, developers should follow this checklist:
 
 1. **Create Images:**
-   - Draw or generate `closed.png` and `open.png` matching the visual specifications.
-   - Save them into `public/assets/boxes/[new-box-id]/`.
+   - Draw or generate closed and open state images matching the visual specifications.
+   - Save them into `public/assets/boxes/` as `box-[new-box-id]-closed.png` and `box-[new-box-id]-open.png`.
 2. **Register in Configuration:**
    - Open `src/config/boxes.json`.
    - Add a new object inside the `boxes` array:
