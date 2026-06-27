@@ -85,8 +85,7 @@ Important text values (like Level numbers or button actions) should leverage tex
 Skins are loaded dynamically from file presence (`<box-id>-closed.png` and `<box-id>-open.png`). Developers may implement any theme or style. Below is an optional visual redesign guide for standard skins to match the Cute Kawaii aesthetic.
 
 ```
-      Default Starter         Bronze Teddy Crate        Cyber Kitten-Vault        CEO Chubby Piggy
-         (Common)                   (Rare)                   (Epic)                 (Legendary)
+      Default Starter         Bronze Deluxe Crate       Neon Cyber-Vault          CEO Golden Safe
           .---.                     .---.                     .---.                    .-"-.
          /     \  (Tape details)   /  ^  \  (Bear Ears)      / (o) \  (LED Whisker)   /  o  \ (Crown)
         |  o L o| <--(Blush)      | (o.o) |                 | > o < |                | ( - ) |
@@ -97,13 +96,13 @@ Skins are loaded dynamically from file presence (`<box-id>-closed.png` and `<box
 1.  **Default Starter Box (`box-start`)**
     *   *Assets:* `box-start-closed.png` (closed state) and `box-start-open.png` (open state).
     *   *Visual suggestion:* A simple kraft-paper cardboard box with cute round eyes, tape, blushing cheeks, and a band-aid sticker.
-2.  **Bronze Deluxe Crate (`bronze_deluxe_box`)**
+2.  **Bronze Deluxe Crate (`box-1`)**
     *   *Visuals:* Chocolate-bronze crate adorned with fluffy teddy bear ears on top and a cute pink ribbon bow.
     *   *Aesthetics:* Soft warm bronze (`#CA8A04`), baby pink ribbons (`#FFB7B2`).
-3.  **Neon Cyber-Vault (`neon_cyber_box`)**
+3.  **Neon Cyber-Vault (`box-2`)**
     *   *Visuals:* A gaming console box styled like a cat, with glowing pink LED whiskers, neon triangular cat ears, and pixelated anime eyes.
     *   *Aesthetics:* Pastel violet (`#BDB2FF`), neon cyan (`#9BF6FF`).
-4.  **CEO Golden Safe (`ceo_luxury_safe`)**
+4.  **CEO Golden Safe (`box-3`)**
     *   *Visuals:* A round golden safe/piggy bank safe wearing a royal crown, clutching a golden key.
     *   *Aesthetics:* Soft pastel gold (`#FFE3A8`), red crown details.
 

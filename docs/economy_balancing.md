@@ -116,6 +116,8 @@ Every roll that fails to drop a box skin increases the `skin_unlock` weight by *
 $$\text{ActiveSkinWeight}(N) = \text{BaseSkinWeight} + (3 \times N)$$
 $$\text{ActiveTotalWeight}(N) = \text{XPWeightsSum} + \text{ActiveSkinWeight}(N) = 999 + \text{BaseSkinWeight} + 3N$$
 
+**All Boxes Owned:** If the player has unlocked every box listed in `src/config/boxes.json`, the `skin_unlock` weight is forced to **0** and the pity counter freezes. The weight is restored to its level-appropriate base value and the pity counter resumes as soon as a new box is added to the config. There is no duplicate conversion flow.
+
 *Standard Mode (Level 6+) Dynamic Probability Example:*
 - **$N = 0$ (Just Reset):** Weight = 1. Probability = $1 / 1000 = \mathbf{0.1\%}$
 - **$N = 10$ (10 Misses):** Weight = 31. Probability = $31 / 1030 \approx \mathbf{3.01\%}$

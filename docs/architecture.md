@@ -92,10 +92,12 @@ interface GameActions {
 
   // --- Developer / Cheat Actions ---
   devCheatRefillEnergy(): void;
+  devCheatEmptyEnergy(): void;
   devCheatLevelUp(): void;
   devCheatReset(): void;
   devCheatUnlockAllSkins(): void;
   devCheatAddPinatas(): void; // Grants 999 Pinatas for testing the Store
+  devCheatWarpTime(): void; // Subtracts 300,000ms from lastRechargeTime to simulate 5 minutes of offline time, then immediately triggers updateEnergyRecharge()
 }
 ```
 
@@ -151,6 +153,7 @@ Controls constraints around play sessions.
 ```json
 {
   "maxEnergy": 10,
+  "startingEnergy": 10,
   "rechargeIntervalSeconds": 30,
   "costPerOpen": 1,
   "startingPinatas": 100,
@@ -163,6 +166,7 @@ Controls constraints around play sessions.
   "koFiTipUrl": "https://ko-fi.com/ishanmanjrekar/tip"
 }
 ```
+*Note:* `startingEnergy` defaults to `maxEnergy` (full energy on first launch). It is a separate field to allow quick tuning without changing the cap.
 
 ### 4.3 Drop Tables & Onboarding Setup (`src/config/drop_tables.json`)
 Defines rewards, their weights, and the initial rigged user flow.
@@ -296,35 +300,31 @@ Defines rewards, their weights, and the initial rigged user flow.
 ```
 
 ### 4.4 Box Skins Config (`src/config/boxes.json`)
-Lists visual themes and metadata.
+Lists visual themes and metadata. There is **no rarity field** — the visual quality of each box is determined purely by its image assets, not by a tier label.
 ```json
 {
   "boxes": [
     {
       "id": "box-start",
       "name": "Default Starter Box",
-      "rarity": "Common",
       "description": "The first box given to you for free. Smells of fresh paper and minor expectation."
     },
     {
-      "id": "bronze_deluxe_box",
+      "id": "box-1",
       "name": "Bronze Deluxe Crate",
-      "rarity": "Rare",
       "description": "Shiny plastic painted to look like bronze. Guaranteed to contain useless items."
     },
     {
-      "id": "neon_cyber_box",
+      "id": "box-2",
       "name": "Neon Cyber-Vault",
-      "rarity": "Epic",
       "description": "Equipped with RGB strip lights that increase energy consumption by 400%."
     },
     {
-      "id": "ceo_luxury_safe",
+      "id": "box-3",
       "name": "CEO Golden Safe",
-      "rarity": "Legendary",
       "description": "Dipped in genuine fake gold. Smells of corporate bonuses and player tears."
     }
   ]
 }
 ```
-*Note:* The UI will locate visual assets dynamically inside the assets directory using the box ID and standard hyphens (e.g., `public/assets/boxes/box-start-closed.png` and `box-start-open.png`). Any custom skin with ID `<skin-id>` will map to `<skin-id>-closed.png` and `<skin-id>-open.png`.
+*Note:* The UI locates visual assets dynamically using the pattern `box-[box-id]-[state].png` inside `public/assets/boxes/`. For example, box `box-1` maps to `public/assets/boxes/box-1-closed.png` and `box-1-open.png`. To add a new skin, place the two PNG files in that folder and add a matching entry in this config.

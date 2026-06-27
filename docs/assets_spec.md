@@ -27,16 +27,19 @@ public/
       │     ├── reward_reveal.mp3
       │     └── level_up.mp3
       └── boxes/
-            ├── box-default_cardboard-closed.png
-            ├── box-default_cardboard-open.png
-            ├── box-bronze_deluxe_box-closed.png
-            ├── box-bronze_deluxe_box-open.png
-            ├── box-[box-id]-closed.png
-            └── box-[box-id]-open.png
+            ├── box-start-closed.png
+            ├── box-start-open.png
+            ├── box-1-closed.png
+            ├── box-1-open.png
+            ├── box-2-closed.png
+            ├── box-2-open.png
+            ├── box-3-closed.png
+            ├── box-3-open.png
+            └── box-[new-box-id]-closed.png  (additional skins follow this pattern)
 ```
 
-- **Audio folder:** Static audio feedback files used across the interface.
-- **Boxes folder:** Contains the visual assets for each lootbox skin, named following the pattern `box-[box-id]-[state].png`.
+- **Audio folder:** Static audio feedback files. If a file does not exist, no sound plays for that event (gracefully silent).
+- **Boxes folder:** Contains the visual assets for each lootbox skin. Files must follow the pattern `box-[box-id]-[state].png` where `[box-id]` matches the `id` field in `src/config/boxes.json`.
 
 ---
 
@@ -83,6 +86,8 @@ Since box assets are placed in the `public/` directory, they are served as stati
 /**
  * Helper to get box asset URLs based on state and ID.
  * Since files are placed in public/, they map to absolute root paths.
+ * Box ID must match the `id` field in src/config/boxes.json.
+ * Example: getBoxAssetUrl('box-1', 'closed') => '/assets/boxes/box-1-closed.png'
  */
 export const getBoxAssetUrl = (boxId: string, state: 'closed' | 'open'): string => {
   return `/assets/boxes/box-${boxId}-${state}.png`;

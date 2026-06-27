@@ -23,13 +23,14 @@ Because lootbox odds are statistical and energy recharge is time-gated, testing 
 
 | Action Button | Store Call / Operation | Test Objective |
 | :--- | :--- | :--- |
-| **+1 Energy** | `energy = Math.min(maxEnergy, energy + 1)` | Increments energy without waiting or watching an ad. |
+| **+1 Energy** | `energy = Math.min(maxEnergy, energy + 1)` | Increments energy without waiting. |
 | **Empty Energy** | `energy = 0` | Tests state transitions for empty energy (disabling the Open button). |
 | **Reset Onboarding** | `onboardingStep = 0` | Resets state so the next 6 pulls are rigged (verifies onboarding sequence). |
 | **+1 Level** | Triggers level-up transition & increments level | Tests Level Up transitions, badges, and rewards. |
 | **Unlock All Skins** | Adds all box IDs in config to `unlockedBoxes` | Checks UI layout and equips all boxes without roll grinding. |
-| **Add 999 Pinatas 🪅** | Mock credits update | Verifies the "Buy Energy" P2W purchase overlay. |
+| **Add 999 Pinatas 🪅** | Mock credits update | Verifies the "Buy Energy" purchase overlay. |
 | **Wipe Save State** | Resets `localStorage` and store state | Verifies first-time run configurations. |
+| **Warp +5 Minutes** | `lastRechargeTime -= 300_000`, then calls `updateEnergyRecharge()` | Simulates 5 minutes of offline time to verify energy tick-up without waiting. |
 
 ---
 
@@ -104,9 +105,18 @@ window.runDropRateSimulation = (pullsCount = 1000) => {
 };
 ```
 
-QA can run this in the browser console (F12) to verify that a standard drop weight configuration matches the expected probabilities:
-- `small_xp` $\approx 71.2\%$
-- `medium_xp` $\approx 23.7\%$
-- `large_xp` $\approx 4.7\%$
-- `skin_unlock` $\approx 0.24\%$
-(Based on standard weights $300 / 100 / 20 / 1$ respectively).
+QA can run this in the browser console (F12) to verify that a standard drop weight configuration (Level 6+) matches the expected probabilities from `economy_balancing.md`:
+
+| Drop ID | Expected Probability (Standard Mode, Level 6+) |
+| :--- | :---: |
+| `xp_8` | **30.00%** |
+| `xp_10` | **20.00%** |
+| `xp_12` | **20.00%** |
+| `xp_15` | **10.00%** |
+| `xp_18` | **10.00%** |
+| `xp_20` | **5.00%** |
+| `xp_30` | **3.00%** |
+| `xp_45` | **1.90%** |
+| `skin_unlock` | **0.10%** (base; grows +3 per miss via pity; resets to 0 if all boxes owned) |
+
+*Total base weight: 1000. For early game (Level 1–5), `skin_unlock` base weight is 200 and total is 1199, giving ~16.68% skin probability.*

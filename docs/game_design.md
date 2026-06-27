@@ -81,11 +81,10 @@ Leveling up is the primary progression metric, demonstrating a number that goes 
 The **Collection Screen** houses all unlocked box skins. Changing the active box skin alters the visual assets displayed on the main opening screen.
 - **Purely Cosmetic:** Unlocked boxes provide no functional gameplay advantages.
 - **Extensible File-Based Architecture:** Adding a new box (which can be any theme or image) to the game is as simple as:
-  1. Placing a closed state image (`<box-id>-closed.png`) and an open state image (`<box-id>-open.png`) into the assets folder.
-  2. Registering the new box entry (id, name, rarity, description) in the central configuration JSON.
+  1. Placing a closed state image (`box-<box-id>-closed.png`) and an open state image (`box-<box-id>-open.png`) into the `public/assets/boxes/` folder.
+  2. Registering the new box entry (id, name, description) — with no rarity field — in `src/config/boxes.json`.
   * *Default Box:* The first starting box is configured as `box-start` (assets: `box-start-closed.png` and `box-start-open.png`).
 - **Automatic Selection:** When a new box skin is unlocked, the game automatically switches the active skin to the newly unlocked box to trigger immediate visual gratification.
-- **Placebo Stats:** Skins display mock stats (e.g., "CEO Golden Safe: +9999% Luck") in the UI to satirize F2P stats, but these stats have no effect on drop math.
 
 ---
 
@@ -96,7 +95,7 @@ Drops are determined by weights loaded from the configuration JSON.
 ### 4.1 Drop Categories
 - **XP Drops:** Evaluated as a percentage of the XP required for the *next* level, with an added $\pm 5\%$ additive variation to look organic.
 - **Box Skin Drops:** Unlocks a random themed box skin not currently owned by the player.
-  - **Duplicate Conversion:** If the rolled drop is a skin that the player already owns, the UI plays a high-gratification "JACKPOT!" animation, then degrades to show the skin converting into a tiny mock reward (**1 Pinata 🪅**) with a satirical message.
+  - **All Boxes Owned:** If the player has unlocked every box currently registered in `src/config/boxes.json`, the `skin_unlock` drop weight is automatically set to **0** and skins cannot drop. The pity counter also freezes at 0. As soon as a new box is added to the config (and its assets placed in `public/assets/boxes/`), the weight is restored to its level-appropriate base value and the pity system resumes normally.
 
 ### 4.2 Drop Table Weights (Standard Mode - Level 6+)
 Standard weights are defined out of a total sum of **1000**:

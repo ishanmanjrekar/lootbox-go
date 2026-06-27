@@ -109,7 +109,7 @@ The application consists of a single-page app layout with a sticky HUD at the to
 - **Center Stage:** The active lootbox skin.
   - Implements a subtle idle breathing animation (vertical drift).
   - Tapping the box triggers a spring-based scale-down-and-rebound wobble effect.
-- **Description Banner:** Displays a whimsical/satirical text block above the lootbox in teal and pink (e.g., *"Sparkles, sweets, and happy thoughts... that's what my day is made of! ✨🍰"*).
+- **Description Banner:** Displays a randomly selected kawaii-themed one-liner above the lootbox in teal and pink. A large pool of short, vague, cute one-liners is defined in code (e.g., *"Sparkles, sweets, and happy thoughts... that's what my day is made of! ✨🍰"*, *"Something wonderful is inside. Probably. 🌸"*, *"Every box is a mystery. This one smells like cotton candy. 🍬"*). A new one is selected randomly each time the main screen loads or the player changes their active skin. Lines may repeat.
 - **Open Button:** Large green button centered below the box.
   - Text: `OPEN BOX` in pink comic font.
   - Icon: Yellow-orange fire icon with the text `x1` representing the energy cost.
@@ -120,7 +120,7 @@ The application consists of a single-page app layout with a sticky HUD at the to
 - Shows a 3-column scrollable grid of cards representing all available boxes defined in the configuration.
 - **Card States:**
   - **Locked:** Darkened/blurred card containing a placeholder package/box graphic.
-  - **Unlocked:** Shows full-color box graphics, rarity badge, and name.
+  - **Unlocked:** Shows full-color box graphic and name. No rarity badge is displayed.
   - **Equipped:** Indicated by a bright green border.
 - Tapping an unlocked card equips the skin (saves to Zustand and updates the active skin state).
 - **Close Button:** A peach-orange button labeled `CLOSE` at the bottom of the drawer collapses the drawer back to its sticky bottom position.
@@ -169,7 +169,7 @@ When the user clicks "Open Box":
    ```
 5. **Reward Type Specifics:**
    - **XP Card:** Shows a bubbly, soft-colored card displaying the XP value (e.g. `+50 XP`) with sparkling stars and a pink "XP" crown badge.
-   - **New Box Skin Card:** Displays the unlocked box skin card with rotating pastel rainbow rays in the background and a cute "NEW UNLOCK!" badge.
+   - **New Box Skin Card:** Displays the unlocked box skin card with rotating pastel rainbow rays in the background and a cute "NEW UNLOCK!" badge. This card only appears when the player does not yet own the rolled skin. If all registered skins are already owned, `skin_unlock` has a weight of 0 and this card will never appear until new skins are added to the config.
 
 ### 4.3 Level Up Sequence
 Triggers when accumulated XP overflows the level requirement.
