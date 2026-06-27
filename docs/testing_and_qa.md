@@ -2,6 +2,13 @@
 
 This document details the testing framework, debug panels, developer cheat codes, and verification scripts required to test features like rigged onboarding, drop tables, and passive energy regeneration in **Lootbox Go!**.
 
+### Related Documents
+- [Game Design Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/game_design.md) - Play loop rules, onboarding structures, and monetization mechanics.
+- [UI & UX Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/ui_ux.md) - HUD styling, bottom collection slide-out, and Store overlays.
+- [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Cute visuals guides, font configurations, and animation settings.
+- [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - Mathematical progressions, drop probabilities, and pricing lists.
+- [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - State management files, persistent data, and sleep timers.
+
 ---
 
 ## 1. The Developer Debug Panel
@@ -18,10 +25,10 @@ Because lootbox odds are statistical and energy recharge is time-gated, testing 
 | :--- | :--- | :--- |
 | **+1 Energy** | `energy = Math.min(maxEnergy, energy + 1)` | Increments energy without waiting or watching an ad. |
 | **Empty Energy** | `energy = 0` | Tests state transitions for empty energy (disabling the Open button). |
-| **Reset Onboarding** | `onboardingStep = 0` | Resets state so the next 3 pulls are rigged (verifies onboarding sequence). |
+| **Reset Onboarding** | `onboardingStep = 0` | Resets state so the next 6 pulls are rigged (verifies onboarding sequence). |
 | **+1 Level** | Triggers level-up transition & increments level | Tests Level Up transitions, badges, and rewards. |
 | **Unlock All Skins** | Adds all box IDs in config to `unlockedBoxes` | Checks UI layout and equips all boxes without roll grinding. |
-| **Add 999 Gems** | Mock credits update | Verifies the "Buy Energy" P2W purchase overlay. |
+| **Add 999 Pinatas 🪅** | Mock credits update | Verifies the "Buy Energy" P2W purchase overlay. |
 | **Wipe Save State** | Resets `localStorage` and store state | Verifies first-time run configurations. |
 
 ---
@@ -32,20 +39,28 @@ QA testers and developers should follow these testing plans to verify game logic
 
 ### 2.1 Rigged Onboarding Verification Plan
 1. **Setup:** Open the Developer Debug Panel and click **Wipe Save State**.
-2. **Pull 1:** Click the box once. Verify that:
+2. **Pull 1 (Level 1):** Click the box once. Verify that:
    - Energy drops to 9.
-   - The drop card shows a new box skin (e.g., `Bronze Deluxe Crate`).
-   - The Collection Screen now shows this skin as unlocked and equipped.
-3. **Pull 2:** Click the box a second time. Verify that:
+   - The drop card shows a large XP boost (~40 XP, 80% progress).
+3. **Pull 2 (Level 1):** Click the box a second time. Verify that:
    - Energy drops to 8.
-   - The drop card shows a different box skin (e.g., `Neon Cyber-Vault`).
-   - The Collection Screen shows this skin as unlocked and equipped.
-4. **Pull 3:** Click the box a third time. Verify that:
+   - The drop card shows a small XP reward (~10 XP).
+   - The game immediately displays the celebratory **Level Up Overlay** to Level 2.
+4. **Pull 3 (Level 2):** Click the box a third time. Verify that:
    - Energy drops to 7.
-   - The drop card gives a large XP reward.
-   - The game immediately freezes gameplay and launches the full-screen **Level Up Overlay**.
-   - After dismissing, the player is Level 2 and the Level Badge reflects the progress.
-5. **Standard Loops:** The 4th pull should trigger standard weighted drops. Verifying standard drop outputs can be done via console logging.
+   - The drop card gives ~103 XP (30% progress).
+5. **Pull 4 (Level 2):** Click the box a fourth time. Verify that:
+   - Energy drops to 6.
+   - The drop card shows a new box skin (guaranteed unlock).
+   - The Collection Screen shows this skin as unlocked and equipped.
+6. **Pull 5 (Level 2):** Click the box a fifth time. Verify that:
+   - Energy drops to 5.
+   - The drop card gives ~120 XP (35% progress).
+7. **Pull 6 (Level 2):** Click the box a sixth time. Verify that:
+   - Energy drops to 4.
+   - The drop card gives ~120 XP (35% progress).
+   - The game triggers a **Level Up Overlay** to Level 3.
+8. **Standard Loops:** The 7th pull should trigger standard weighted drops. Verifying standard drop outputs can be done via console logging.
 
 ### 2.2 Offline Energy Recharge Verification Plan
 1. **Setup:** Consume energy until it is at `5/10`. Note the current time.

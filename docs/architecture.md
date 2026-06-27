@@ -2,6 +2,13 @@
 
 This document outlines the software architecture, state management design, persistence strategies, offline timing logic, and configuration data schemas for **Lootbox Go!**.
 
+### Related Documents
+- [Game Design Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/game_design.md) - Gameplay loop GDD, progression rules, and energy constraints.
+- [UI & UX Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/ui_ux.md) - HUD badges, Collection drawer grid, and Store modal layouts.
+- [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Sweet cream theme values, font imports, and Framer Motion squish specs.
+- [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - XP growth tables, drop weight lists, and refill economics details.
+- [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - Secret panel debugging interface, test procedures, and simulator script.
+
 ---
 
 ## 1. System Architecture Overview
@@ -52,16 +59,22 @@ interface GameState {
   level: number;
   xp: number; // Current XP in the current level
 
+  // --- Wallet / Currency ---
+  pinatas: number; // Current Pinatas 🪅 count (configurable starting balance)
+
   // --- Energy ---
-  energy: number; // Current energy count
+  energy: number; // Current energy count (can overflow maximum capacity)
   lastRechargeTime: number; // Epoch timestamp (ms) of the last energy update
 
   // --- Collection ---
   unlockedBoxes: string[]; // List of box IDs unlocked by the player
   activeBoxSkin: string; // The ID of the currently equipped box skin
 
+  // --- Pity System ---
+  skinPityCount: number; // Number of consecutive non-skin rolls since the last skin unlock
+
   // --- Onboarding ---
-  onboardingStep: number; // 0, 1, 2, 3 (rigged pulls), 4+ (standard game loop)
+  onboardingStep: number; // 0 to 5 (rigged rolls 1 to 6), 6+ (standard game loop)
 }
 ```
 
@@ -72,16 +85,17 @@ interface GameActions {
   openBox(): void; // Deducts energy, calculates random drop, awards XP/Skins, updates recharge timestamps
   changeBoxSkin(boxId: string): void; // Changes the currently active box skin
 
-  // --- Energy Management Actions ---
-  updateEnergyRecharge(): void; // Evaluates passive energy recovery based on timestamp difference
-  watchMockAd(): void; // Increments energy by 1 (simulating watching a satirical advertisement)
-  buyEnergyRefill(): void; // Instantly refills energy to max capacity (using mock fake currency flow)
+  // --- Store & Currency Actions ---
+  updateEnergyRecharge(): void; // Evaluates passive energy recovery based on timestamp difference (halts if energy >= maxEnergy)
+  buyEnergy(amount: number, cost: number): void; // Spends Pinatas to buy energy (allows energy overflow)
+  claimKoFiPinatas(): void; // Opens external Ko-fi URL and immediately credits player +100 Pinatas
 
   // --- Developer / Cheat Actions ---
   devCheatRefillEnergy(): void;
   devCheatLevelUp(): void;
   devCheatReset(): void;
   devCheatUnlockAllSkins(): void;
+  devCheatAddPinatas(): void; // Grants 999 Pinatas for testing the Store
 }
 ```
 
@@ -139,8 +153,14 @@ Controls constraints around play sessions.
   "maxEnergy": 10,
   "rechargeIntervalSeconds": 30,
   "costPerOpen": 1,
-  "mockAdRechargeAmount": 1,
-  "mockBuyCostClownGems": 99
+  "startingPinatas": 100,
+  "refillOptions": [
+    { "energyAmount": 5, "pinataCost": 10 },
+    { "energyAmount": 15, "pinataCost": 20 },
+    { "energyAmount": 50, "pinataCost": 30 }
+  ],
+  "koFiTipPinatas": 100,
+  "koFiTipUrl": "https://ko-fi.com/ishanmanjrekar/tip"
 }
 ```
 
@@ -148,57 +168,128 @@ Controls constraints around play sessions.
 Defines rewards, their weights, and the initial rigged user flow.
 ```json
 {
+  "pitySystem": {
+    "baseWeight": 1,
+    "weightIncrementPerMiss": 3,
+    "earlyGameBaseWeight": 200,
+    "earlyGameMaxLevel": 5
+  },
   "onboardingRiggedSequence": [
     {
       "step": 0,
-      "dropType": "box_unlock",
-      "value": "bronze_deluxe_box",
-      "description": "Rigged pull 1: Guaranteed new themed box skin"
+      "dropType": "xp_percentage",
+      "value": 0.80,
+      "variationRange": 0.10,
+      "description": "Rigged pull 1: 80% XP to level up"
     },
     {
       "step": 1,
-      "dropType": "box_unlock",
-      "value": "neon_cyber_box",
-      "description": "Rigged pull 2: Guaranteed rare visual box"
+      "dropType": "xp_percentage",
+      "value": 0.20,
+      "variationRange": 0.10,
+      "forceLevelUp": true,
+      "description": "Rigged pull 2: 20% XP, forcing level up to Lvl 2"
     },
     {
       "step": 2,
       "dropType": "xp_percentage",
-      "value": 1.1,
-      "description": "Rigged pull 3: Drops 110% of Level 1 XP, guaranteeing instant level up"
+      "value": 0.30,
+      "variationRange": 0.10,
+      "description": "Rigged pull 3: 30% XP of Level 2 requirement"
+    },
+    {
+      "step": 3,
+      "dropType": "box_unlock",
+      "value": "random",
+      "description": "Rigged pull 4: Guaranteed new random box skin"
+    },
+    {
+      "step": 4,
+      "dropType": "xp_percentage",
+      "value": 0.35,
+      "variationRange": 0.05,
+      "description": "Rigged pull 5: 35% XP of Level 2 requirement"
+    },
+    {
+      "step": 5,
+      "dropType": "xp_percentage",
+      "value": 0.35,
+      "variationRange": 0.05,
+      "forceLevelUp": true,
+      "description": "Rigged pull 6: 35% XP, forcing level up to Lvl 3"
     }
   ],
   "standardDropTable": [
-    {
-      "id": "small_xp",
-      "type": "xp_percentage",
-      "value": 0.10,
-      "variationRange": 0.10,
-      "weight": 300,
-      "description": "10% of next level's XP, +/- 10% error margin"
-    },
-    {
-      "id": "medium_xp",
-      "type": "xp_percentage",
-      "value": 0.30,
-      "variationRange": 0.10,
-      "weight": 100,
-      "description": "30% of next level's XP, +/- 10% error margin"
-    },
-    {
-      "id": "large_xp",
-      "type": "xp_percentage",
-      "value": 0.60,
-      "variationRange": 0.10,
-      "weight": 20,
-      "description": "60% of next level's XP, +/- 10% error margin"
-    },
     {
       "id": "skin_unlock",
       "type": "box_unlock",
       "value": "random",
       "weight": 1,
-      "description": "Unlocks a random locked box skin"
+      "description": "Base weight 1, becomes 200 if Level <= 5, grows by +3 on consecutive misses"
+    },
+    {
+      "id": "xp_45",
+      "type": "xp_percentage",
+      "value": 0.45,
+      "variationRange": 0.05,
+      "weight": 19,
+      "description": "45% of next level's XP"
+    },
+    {
+      "id": "xp_30",
+      "type": "xp_percentage",
+      "value": 0.30,
+      "variationRange": 0.05,
+      "weight": 30,
+      "description": "30% of next level's XP"
+    },
+    {
+      "id": "xp_20",
+      "type": "xp_percentage",
+      "value": 0.20,
+      "variationRange": 0.05,
+      "weight": 50,
+      "description": "20% of next level's XP"
+    },
+    {
+      "id": "xp_18",
+      "type": "xp_percentage",
+      "value": 0.18,
+      "variationRange": 0.05,
+      "weight": 100,
+      "description": "18% of next level's XP"
+    },
+    {
+      "id": "xp_15",
+      "type": "xp_percentage",
+      "value": 0.15,
+      "variationRange": 0.05,
+      "weight": 100,
+      "description": "15% of next level's XP"
+    },
+    {
+      "id": "xp_12",
+      "type": "xp_percentage",
+      "value": 0.12,
+      "variationRange": 0.05,
+      "weight": 200,
+      "description": "12% of next level's XP"
+    },
+    {
+      "id": "xp_10",
+      "type": "xp_percentage",
+      "value": 0.10,
+      "variationRange": 0.05,
+      "weight": 200,
+      "description": "10% of next level's XP"
+    },
+    {
+      "id": "xp_8",
+      "type": "xp_percentage",
+      "value": 0.08,
+      "variationRange": 0.05,
+      "weight": 300,
+      "description": "8% of next level's XP"
     }
   ]
 }
@@ -210,10 +301,10 @@ Lists visual themes and metadata.
 {
   "boxes": [
     {
-      "id": "default_cardboard",
-      "name": "Standard Cardboard Box",
+      "id": "box-start",
+      "name": "Default Starter Box",
       "rarity": "Common",
-      "description": "A wet, slightly crushed cardboard box found in the trash. Smells like disappointment."
+      "description": "The first box given to you for free. Smells of fresh paper and minor expectation."
     },
     {
       "id": "bronze_deluxe_box",
@@ -236,4 +327,4 @@ Lists visual themes and metadata.
   ]
 }
 ```
-*Note:* The UI will locate visual assets using standard paths matching the ID (e.g., `public/assets/boxes/neon_cyber_box/closed.png` and `open.png`).
+*Note:* The UI will locate visual assets dynamically inside the assets directory using the box ID and standard hyphens (e.g., `public/assets/boxes/box-start-closed.png` and `box-start-open.png`). Any custom skin with ID `<skin-id>` will map to `<skin-id>-closed.png` and `<skin-id>-open.png`.

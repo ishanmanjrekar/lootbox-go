@@ -2,88 +2,104 @@
 
 This document details the visual style, design system tokens, screen structures, animations (Framer Motion), sound design guidance, and satirical overlays for **Lootbox Go!**.
 
+### Related Documents
+- [Game Design Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/game_design.md) - Parody GDD, core gameplay loop, and progression systems.
+- [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Marshmallow styling pillars, typography, and visual assets guide.
+- [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - Numeric formulas, starting values, and refill economics.
+- [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - Zustand state stores, actions, and persistent storage schemas.
+- [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - secret debug badge trigger, checklists, and simulation tools.
+
 ---
 
 ## 1. Visual Identity & Design System
 
-The game utilizes a **"Premium Casino Cyberpunk"** theme—vibrant, high-contrast neon highlights set against clean, sleek dark background materials. The intent is to leverage modern mobile-app styling to make the player feel like they are inside a flashy virtual slot machine.
+The game utilizes a **"Cute Kawaii Pinata Party"** theme—soft, sugary pastel highlights set against clean, warm cream background materials. The intent is to leverage cute, bubbly app styling to make the player feel like they are inside a cozy candy box.
 
 ### 1.1 Color Palette
 Vanilla CSS variables will be defined in `src/index.css` for consistent application:
 
 ```css
 :root {
-  /* Backgrounds */
-  --bg-primary: #0a0b0e;     /* Deep space black */
-  --bg-secondary: #13161c;   /* Dark navy card color */
-  --bg-tertiary: #1b1f27;    /* Slate border/button background */
+  /* Soft Backgrounds */
+  --bg-primary: #FFFDF9;      /* Warm sweet cream */
+  --bg-secondary: #FFEBF0;    /* Soft cotton-candy pink */
+  --bg-tertiary: #E8F4F8;     /* Milky sky blue */
+  --border-color: #4D3834;    /* Warm milk-chocolate brown for outlines */
 
   /* Interface Accent Colors */
-  --accent-neon-blue: #00d2ff;
-  --accent-neon-pink: #ff007f;
-  --accent-neon-yellow: #ffe600;
-  --energy-yellow: #ffd700;
-
-  /* Rarity Glows & Borders */
-  --rarity-common: #8e9297;       /* Standard Gray */
-  --rarity-rare: #0070dd;         /* Magic Blue */
-  --rarity-epic: #a335ee;         /* Epic Purple */
-  --rarity-legendary: #ff8000;    /* Legendary Orange */
+  --accent-strawberry: #FF5C8A; /* Primary brand pink */
+  --accent-sky: #4EA8DE;        /* Playful action blue */
+  --accent-honey: #FFD166;      /* Bright gold / star yellow */
+  --accent-mint: #06D6A0;       /* Success green / energy indicator */
+  
+  /* Rarity Colors (Kawaii/Pastel Palette) */
+  --rarity-common: #D1CFC7;      /* Soft clay gray */
+  --rarity-rare: #A2D2FF;        /* Fluffy cloud blue */
+  --rarity-epic: #D8B4F8;        /* Sweet lavender purple */
+  --rarity-legendary: #FFC6FF;   /* Magical rainbow pink */
 
   /* Text Colors */
-  --text-main: #f0f3f8;
-  --text-muted: #8391a5;
-  --text-gold: #ffd700;
+  --text-main: #3D2622;          /* Rich chocolate brown for high readability */
+  --text-muted: #8E7A75;         /* Soft caramel brown for descriptions */
+  --text-white: #FFFFFF;
 }
 ```
 
 ### 1.2 Typography
-- **Primary Font:** `Inter` or `Outfit` via Google Fonts (clean, geometric sans-serif for UI numbers and button states).
-- **Secondary Title Font:** `Orbitron` or `Montserrat` (bold, futuristic caps for big announcements like "LEVEL UP!" and "NEW UNLOCK!").
+- **Primary Font:** `Fredoka` or `Quicksand` via Google Fonts (rounded, friendly geometric sans-serif for UI numbers and body text).
+- **Secondary Title Font:** `Lilita One` or `DynaPuff` (bold, bubbly, organic letters for big announcements like "LEVEL UP!" and "NEW UNLOCK!").
 
 ---
 
 ## 2. Layout & Screen Hierarchy
 
-The application consists of a single-page app layout with a sticky HUD at the top, a dynamic central viewport, and a bottom tab navigation panel.
+The application consists of a single-page app layout with a sticky HUD at the top, a dynamic central viewport, and a bottom drawer panel that slides up to view the collection.
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│  [⚡ 8/10 (0:14)]        [⭐ LVL 14]       [||||| 45%]  │ <-- Sticky HUD
+│  [🔥 energy 10/10]         [🛒]        [🪅 pinatas 100]│ <-- Sticky HUD
+├────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ [XP]                  500/1000                   │  │ <-- XP Progress Bar
+│  └──────────────────────────────────────────────────┘  │
+│                        LEVEL 9                         │ <-- Level text
 ├────────────────────────────────────────────────────────┤
 │                                                        │
+│              Sparkles, sweets, and...                  │ <-- Description banner
 │                                                        │
-│                     [ Lootbox ]                        │ <-- Main Viewport
-│               (Tapping / Opening Box)                  │ (or Collection View /
-│                                                        │  Mock Shop View)
+│                       .---.                            │
+│                      /     \  (Wings & Heart)          │ <-- Lootbox active skin
+│                     |  o L o|                          │ (vertical breathing)
+│                     `-------'                          │
 │                                                        │
+│                   ┌───────────────┐                    │
+│                   │   OPEN BOX    │                    │ <-- Main interaction button
+│                   │    [🔥 x1]    │                    │
+│                   └───────────────┘                    │
 ├────────────────────────────────────────────────────────┤
-│     [🎁 Open Box]      [🗃️ Collection]     [🪙 Shop]    │ <-- Bottom Navigation
+│             ▼  LOOTBOX COLLECTION  ▲                   │ <-- Slide-up drawer
 └────────────────────────────────────────────────────────┘
 ```
 
 ### 2.1 Sticky Top HUD (Heads-Up Display)
-- **Energy Meter:**
-  - Icon: Pulsing yellow lightning bolt.
-  - Count: Large bold text (e.g., `8/10`).
-  - Timer: Subtle timer below (e.g., `recharges in 0:14`). Undergoes a flash animation when energy increases.
-- **Level Badge:**
-  - Displays `LVL X` inside a glowing shield.
-  - *Tier Glows:*
-    - Levels 1–4: Plain border.
-    - Levels 5–9: Pulsing silver border.
-    - Levels 10–24: Sparkly gold border.
-    - Levels 25+: Animated rainbow/RGB border (using CSS linear-gradient backgrounds and keyframe animations).
-- **XP Progress Bar:**
-  - A full-width or wide bar tracking progress to the next level.
-  - Filled with a glowing purple-to-pink gradient.
-  - When XP increases, the bar fills with a smooth spring transition and a particle spark at the leading edge.
+- **Energy Panel (Left):**
+  - Dark background box with red/orange border.
+  - Displays a yellow-orange fire icon and current/max energy (e.g., `energy 10/10` or `energy 09/10`).
+- **Store Button (Center):**
+  - Yellow background button with chocolate-brown border and a blue shopping cart icon. Clicking this opens the Store overlay.
+- **Pinatas Panel (Right):**
+  - Dark background box with pink/red border.
+  - Displays a colorful pinata icon and current pinatas count (e.g., `pinatas 100` or `pinatas 0`).
+- **XP Progress Bar (Below Badges):**
+  - Full-width rounded green bar with yellow border tracking progress.
+  - Features a bubble-gum pink crown "XP" badge on the left, and centered text showing absolute values (`500/1000`).
+  - Fill state utilizes squishy spring transitions when XP is added.
+- **Level Text (Centered):**
+  - Centered text below the XP bar: `LEVEL X`.
 
-### 2.2 Bottom Navigation Bar
-Tabs toggle the content of the central viewport:
-1. **Lootbox Tab (Default):** The main gameplay dashboard where the active box is displayed and clicked.
-2. **Collection Tab:** The grid of unlocked box skins.
-3. **Mock Shop Tab:** The satirical store to refill energy.
+### 2.2 Navigation Panel (Bottom Drawer)
+- Toggling the collection is handled by a slide-up drawer labeled **LOOTBOX COLLECTION**.
+- Clicking or dragging the drawer pulls it up over the main viewport to show the collection grid.
 
 ---
 
@@ -93,22 +109,33 @@ Tabs toggle the content of the central viewport:
 - **Center Stage:** The active lootbox skin.
   - Implements a subtle idle breathing animation (vertical drift).
   - Tapping the box triggers a spring-based scale-down-and-rebound wobble effect.
-- **Open Button:** Large, glowing primary button centered below the box.
+- **Description Banner:** Displays a whimsical/satirical text block above the lootbox in teal and pink (e.g., *"Sparkles, sweets, and happy thoughts... that's what my day is made of! ✨🍰"*).
+- **Open Button:** Large green button centered below the box.
+  - Text: `OPEN BOX` in pink comic font.
+  - Icon: Yellow-orange fire icon with the text `x1` representing the energy cost.
   - Disables and turns grayscale when energy is 0.
 
 ### 3.2 Collection Screen View
-- Displays a grid of cards representing all available boxes defined in the configuration.
+- Accessed by sliding up the bottom drawer.
+- Shows a 3-column scrollable grid of cards representing all available boxes defined in the configuration.
 - **Card States:**
-  - **Locked:** Darkened/silhouetted card with a lock icon.
+  - **Locked:** Darkened/blurred card containing a placeholder package/box graphic.
   - **Unlocked:** Shows full-color box graphics, rarity badge, and name.
-  - **Equipped:** Highlights with an active neon border.
+  - **Equipped:** Indicated by a bright green border.
 - Tapping an unlocked card equips the skin (saves to Zustand and updates the active skin state).
+- **Close Button:** A peach-orange button labeled `CLOSE` at the bottom of the drawer collapses the drawer back to its sticky bottom position.
 
-### 3.3 Satirical Mock Shop Screen View
-Mocks high-pressure mobile storefronts.
-- **Mock Gold Refill Option:** "Clown Gems Refill" banner. Clicking triggers a payment simulation overlay.
-- **Satirical Ad Trigger:** "Watch Ad for Free Energy". Clicking launches the mock full-screen video overlay.
-- **VIP Mock Sub:** "Get Golden VIP Pass" ($99.99/mo). Promises "infinite appreciation" but does nothing except add a large, shiny, obstructive VIP badge in the corner of the player's screen.
+### 3.3 Store Modal Screen View
+- Accessed by tapping the shopping cart button in the Top HUD. It opens a modal dialog that dims the background main viewport.
+- **Title:** `STORE` in pink comic font with a black outline.
+- **Energy Refill Cards:** Displays three packages (which are configurable via JSON in `energy.json`):
+  - **5 ENERGY:** Displays 1 flame icon. Costs `10 Pinatas`.
+  - **15 ENERGY:** Displays 3 flame icons. Costs `20 Pinatas`.
+  - **50 ENERGY:** Displays a ring of flame icons. Costs `30 Pinatas`. **Note:** Since the standard energy cap is 10, purchasing this package will overflow the player's energy capacity (e.g., `50/10`), adding to the satirical parody.
+- **Pinata Tipping Banner:** A banner reading `"GET 100x [Pinata]"` with a green button labeled `"TIP ME HERE Ko-fi"`.
+  - Clicking this button opens the external link: `https://ko-fi.com/ishanmanjrekar/tip` in a new window.
+  - The game does not verify payment. Clicking this link immediately and silently awards the player `+100 Pinatas` in-game.
+- **Close Button:** A peach-orange button labeled `CLOSE` at the bottom of the modal closes the store overlay.
 
 ---
 
@@ -129,9 +156,9 @@ Animations are essential to hook the player's attention.
 
 ### 4.2 Box Opening Sequence (The Dopamine Hook)
 When the user clicks "Open Box":
-1. **Deduction:** Energy transitions down `8 -> 7`.
-2. **Anticipation:** The box floats upwards, vibrates with increasing speed, and flashes a bright white mask overlay (0.6s).
-3. **Explosion:** The box splits open. A shower of radial particle effects (using HTML5 Canvas or CSS particles) blasts outward.
+1. **Deduction:** Energy transitions down by 1 (e.g. `10 -> 9`), allowing overflow state to decrement.
+2. **Anticipation:** The box stretches, vibrates with squishy movements, and flashes a soft pink overlay (0.6s).
+3. **Explosion:** The box splits open. A shower of candy, hearts, and star sprinkles blasts outward.
 4. **Reveal:** The reward card flips into view from the center of the explosion with a 3D scale-and-rotate transition:
    ```typescript
    const rewardReveal = {
@@ -141,8 +168,8 @@ When the user clicks "Open Box":
    };
    ```
 5. **Reward Type Specifics:**
-   - **XP Card:** Shows a sparkly purple card displaying the XP value (e.g. `+40 XP`).
-   - **New Box Skin Card:** Displays the unlocked box skin card with dynamic gold rays rotating in the background and a "NEW UNLOCK!" badge.
+   - **XP Card:** Shows a bubbly, soft-colored card displaying the XP value (e.g. `+50 XP`) with sparkling stars and a pink "XP" crown badge.
+   - **New Box Skin Card:** Displays the unlocked box skin card with rotating pastel rainbow rays in the background and a cute "NEW UNLOCK!" badge.
 
 ### 4.3 Level Up Sequence
 Triggers when accumulated XP overflows the level requirement.
@@ -151,24 +178,14 @@ Triggers when accumulated XP overflows the level requirement.
   - An overlay dims the screen.
   - Mass confetti particle showers fall.
   - A giant "LEVEL UP!" title scales up, bounces, and shines with a gold gradient sweep.
-  - Displays old level vs. new level (e.g., `Level 14 -> Level 15`).
+  - Displays old level vs. new level.
   - Dismiss button: "Awesome! (Double XP next time?)" which closes the modal.
 
 ---
 
-## 5. Satirical Overlay Layouts
+## 5. Satirical monetization Flow
 
-### 5.1 The "Watch Mock Ad" Overlay
-When a user chooses to watch a mock advertisement to recharge energy:
-- A full-screen container overrides all elements.
-- A loading circular timer runs for 3 seconds in the top-right corner, displaying a close ("X") button that is initially disabled.
-- The center of the screen shows a satirical, mock-playable game advertisement:
-  - Example: A poorly drawn character trapped under lava with gold pins. The caption reads: *"Only 1% of geniuses can pull the correct pin!"*
-- Clicking anything in the ad triggers a fake browser redirect pop-up reading: *"ERROR: Your device is too powerful to run this low-quality game!"*.
-- After 3 seconds, clicking the enabled "X" closes the ad and displays a notification: `+1 Energy Awarded!`.
+The game parodies aggressive microtransactions by using Ko-fi tipping as the only way to acquire Pinatas.
+- **No Payment Wall:** Tapping the Ko-fi link does not verify payment. Merely initiating the action awards the currency, playing into the satirical nature of the app where the economy is "broken by design."
+- **Energy Overflow:** The store parodies "whale tiers" by offering 50 Energy (exceeding the standard limit of 10) for 30 Pinatas. Purchasing this package successfully overflows the energy capacity value shown in the HUD.
 
-### 5.2 The "Fake Checkout" Overlay
-When buying energy refills using fake currency:
-- A loading spinner plays for 1 second saying: *"Securing satirical transaction..."*.
-- Shows a mock banking interface with an oversized green button: *"Approve Gullible Transaction"*.
-- After clicking, a humorous notification pops up: *"Transaction complete! Your virtual bank account has been depleted. Max Energy restored!"*.

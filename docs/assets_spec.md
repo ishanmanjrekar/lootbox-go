@@ -4,6 +4,13 @@ This document details the guidelines, naming conventions, file configurations, a
 
 It is specifically structured to support a highly scalable, file-based architecture where new lootbox themes can be added without modifying React components directly.
 
+### Related Documents
+- [Game Design Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/game_design.md) - GDD gameplay mechanics and cosmetic drop setup.
+- [UI & UX Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/ui_ux.md) - Display assets layouts and screen animations.
+- [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Sugary pastel color codes and hand-drawn styling guidelines.
+- [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - JSON file mappings, assets directory parameters, and states.
+- [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - Verification of assets loading and debug panel instructions.
+
 ---
 
 ## 1. Directory Structure for Assets
