@@ -37,6 +37,12 @@ const KAWAII_ONE_LINERS = [
   "Warning: Opening this box may trigger immediate satisfaction. 🌸✨"
 ];
 
+const isMobile = typeof window !== 'undefined' && (
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+  (navigator.maxTouchPoints > 0 && window.innerWidth <= 800) ||
+  (window as any).Capacitor !== undefined
+);
+
 function App() {
   const {
     level,
@@ -453,8 +459,8 @@ function App() {
           backgroundColor: '#FFFDF9',
           backgroundImage: 'radial-gradient(#FFEBF0 15%, transparent 16%)',
           backgroundSize: '16px 16px',
-          border: '4px solid #4D3834',
-          borderRadius: '24px',
+          border: isMobile ? 'none' : '4px solid #4D3834',
+          borderRadius: isMobile ? '0' : '24px',
         }}
       >
         {/* Particle Canvas Overlay Layer */}

@@ -75,7 +75,9 @@ try {
 # 6. Copy Finished APK to Dump Directory
 # -------------------------------------------------------------
 $BuiltApkPath = Join-Path $AndroidDir "app\build\outputs\apk\debug\app-debug.apk"
-$TargetApkPath = Join-Path $DumpDir "game-debug.apk"
+$Timestamp = Get-Date -Format "ddMMyy-HHmm"
+$TargetApkName = "${Timestamp}-android.apk"
+$TargetApkPath = Join-Path $DumpDir $TargetApkName
 
 if (Test-Path $BuiltApkPath) {
     Write-Host "`n[5/5] Relocating APK to project dump/ folder..." -ForegroundColor Yellow
