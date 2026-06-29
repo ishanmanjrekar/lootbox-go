@@ -10,6 +10,7 @@ Developers can edit the tables and formulas in this document to align gameplay p
 - [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Theme system design tokens and animation rules.
 - [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - State management specs, action names, and configuration schemas.
 - [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - Debug panel settings and verification tasks.
+- [Auto-Open Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md) - Details hold-to-activate automated box opening, button progress strokes, and stop conditions.
 
 ---
 

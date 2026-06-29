@@ -11,6 +11,7 @@ import { LevelUpOverlay } from './components/LevelUpOverlay';
 import { SplashScreen } from './components/SplashScreen';
 import progressionConfig from './config/progression.json';
 import energyConfig from './config/energy.json';
+import { AutoClickStroke } from './components/AutoClickStroke';
 
 
 interface Particle {
@@ -49,6 +50,8 @@ function App() {
     openBox,
     updateEnergyRecharge,
     lastRechargeTime,
+    isAutoMode,
+    setAutoMode,
   } = useGameStore();
 
   // Dialog / Overlays State
@@ -59,6 +62,17 @@ function App() {
   const [isCollectionOpen, setIsCollectionOpen] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [displayedXp, setDisplayedXp] = useState(xp);
+
+  // Hold-to-Auto and Visual Press State
+  const [isHolding, setIsHolding] = useState(false);
+  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const holdStartRef = useRef<number>(0);
+  const holdTriggeredRef = useRef(false);
+  const justActivatedAutoModeRef = useRef(false);
+  const justStoppedAutoModeRef = useRef(false);
+
+  const [isOpenBoxPress, setIsOpenBoxPress] = useState(false);
+  const [isCloseRewardPress, setIsCloseRewardPress] = useState(false);
   const [displayedLevel, setDisplayedLevel] = useState(level);
 
   // Chest & Reward animation state
@@ -171,6 +185,7 @@ function App() {
       setTapCount(newCount);
       if (newCount >= 2) {
         setIsDebugOpen(true);
+        setAutoMode(false); // Disable auto mode on debug panel open
         setTapCount(0);
       }
     } else {
@@ -326,6 +341,7 @@ function App() {
     if (chestState !== 'idle') return;
 
     if (energy < 1) {
+      setAutoMode(false);
       setIsStoreOpen(true);
       return;
     }
@@ -344,6 +360,11 @@ function App() {
     setTimeout(() => {
       setChestState('open');
       spawnParticles(225, 400, 45);
+
+      // Stop auto mode immediately on skin unlocks when card is revealed
+      if (reward.type === 'skin') {
+        setAutoMode(false);
+      }
     }, 600);
   };
 
@@ -401,6 +422,143 @@ function App() {
       setCurrentReward(null);
     }
   };
+
+  // --- Auto-Open Timer & Action Handlers ---
+  const handleHoldStart = (e: React.MouseEvent | React.TouchEvent) => {
+    if (chestState !== 'idle') return;
+
+    // Reset flags if starting a fresh manual interaction
+    if (!isAutoMode) {
+      justStoppedAutoModeRef.current = false;
+      justActivatedAutoModeRef.current = false;
+    } else {
+      // If we are in auto mode, pressing down stops auto mode immediately
+      setAutoMode(false);
+      justStoppedAutoModeRef.current = true;
+      return;
+    }
+
+    if (energy < 1) return;
+    if (holdTimerRef.current) return; // Prevent double trigger on touch/mouse emulated clicks
+
+    setIsHolding(true);
+    holdTriggeredRef.current = false;
+    holdStartRef.current = Date.now();
+
+    holdTimerRef.current = setTimeout(() => {
+      setAutoMode(true);
+      setIsHolding(false);
+      holdTriggeredRef.current = true;
+      justActivatedAutoModeRef.current = true; // Set flag to ignore the release click
+      spawnParticles(225, 400, 10);
+      handleOpenBox(); // Trigger the first click immediately on activation
+    }, 1200); // Shorter duration: 1.2s instead of 2.0s
+  };
+
+  const handleHoldEnd = () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    setIsHolding(false);
+  };
+
+  const handleClickOpenBox = () => {
+    // If we just stopped auto mode, ignore the release click
+    if (justStoppedAutoModeRef.current) {
+      justStoppedAutoModeRef.current = false;
+      holdStartRef.current = 0;
+      return;
+    }
+
+    // If we just activated auto mode via hold, ignore the release click
+    if (justActivatedAutoModeRef.current) {
+      justActivatedAutoModeRef.current = false;
+      holdStartRef.current = 0;
+      return;
+    }
+
+    if (isAutoMode) {
+      setAutoMode(false);
+      return;
+    }
+
+    if (holdTriggeredRef.current) {
+      holdTriggeredRef.current = false;
+      holdStartRef.current = 0;
+      return;
+    }
+
+    // If holdStartRef is 0, it means hold start was bypassed (e.g. energy < 1) or clicked directly
+    if (holdStartRef.current === 0) {
+      handleOpenBox();
+      return;
+    }
+
+    const holdDuration = Date.now() - holdStartRef.current;
+    holdStartRef.current = 0; // Reset
+
+    if (holdDuration > 350) {
+      return;
+    }
+
+    handleOpenBox();
+  };
+
+  const handleAutoOpenBoxComplete = () => {
+    setIsOpenBoxPress(true);
+    setTimeout(() => {
+      setIsOpenBoxPress(false);
+      handleOpenBox();
+    }, 100);
+  };
+
+  const handleAutoCloseRewardComplete = () => {
+    setIsCloseRewardPress(true);
+    setTimeout(() => {
+      setIsCloseRewardPress(false);
+      handleCloseReward();
+    }, 100);
+  };
+
+  const handleClickCloseReward = () => {
+    if (isAutoMode) {
+      setAutoMode(false);
+    }
+    handleCloseReward();
+  };
+
+  // Cleanup hold timer on unmount
+  useEffect(() => {
+    return () => {
+      if (holdTimerRef.current) {
+        clearTimeout(holdTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Interrupt Auto-Mode if we are idle but out of energy
+  useEffect(() => {
+    if (isAutoMode && energy < 1 && chestState === 'idle' && !showLevelUpModal) {
+      setAutoMode(false);
+      setIsStoreOpen(true);
+    }
+  }, [isAutoMode, energy, chestState, showLevelUpModal, setAutoMode]);
+
+  // Reset all hold/click refs when store modal opens to prevent double click bugs when returning
+  useEffect(() => {
+    if (isStoreOpen) {
+      setIsHolding(false);
+      if (holdTimerRef.current) {
+        clearTimeout(holdTimerRef.current);
+        holdTimerRef.current = null;
+      }
+      holdStartRef.current = 0;
+      holdTriggeredRef.current = false;
+      justActivatedAutoModeRef.current = false;
+      justStoppedAutoModeRef.current = false;
+    }
+  }, [isStoreOpen]);
 
   // Get current Level Progress calculations
   const displayedRequiredXp = getRequiredXpForLevel(displayedLevel);
@@ -501,7 +659,10 @@ function App() {
             {/* Store shopping cart trigger */}
             <button
               className="kawaii-panel"
-              onClick={() => setIsStoreOpen(true)}
+              onClick={() => {
+                setAutoMode(false);
+                setIsStoreOpen(true);
+              }}
               style={{
                 height: '42px',
                 width: '54px',
@@ -716,7 +877,7 @@ function App() {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '20px',
+                  gap: '4px', // Reduced gap to shift card up
                   width: '100%',
                 }}
               >
@@ -742,6 +903,7 @@ function App() {
                       justifyContent: 'center',
                       alignItems: 'center',
                       width: '100%',
+                      marginTop: '-24px', // Shift card and particles up
                     }}
                   >
                     {/* Starburst backdrop for skin unlock */}
@@ -858,55 +1020,165 @@ function App() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '6px',
             zIndex: 10,
             paddingBottom: '126px', // leave room for collapsed collection drawer title
           }}
         >
-          {chestState === 'open' ? (
-            <button
-              className="btn-primary"
-              onClick={handleCloseReward}
-              style={{ width: '100%', maxWidth: '240px', backgroundColor: '#06D6A0' }}
-            >
-              {rewardButtonText}
-            </button>
-          ) : (
-            <button
-              className="btn-primary"
-              onClick={handleOpenBox}
-              disabled={chestState === 'opening' || chestState === 'animating_xp'}
-              style={{
-                width: '100%',
-                maxWidth: '240px',
-                ...(energy < 1 ? {
-                  backgroundColor: '#dedede',
-                  color: '#a0a0a0',
-                  boxShadow: '0 6px 0 #4D3834',
-                } : {}),
-              }}
-            >
-              <span>OPEN BOX</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '16px' }}>
-                <img src={energyIcon} alt="cost" style={{ width: '18px', height: '18px' }} />
-                <span>x1</span>
-              </div>
-            </button>
-          )}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+            {chestState === 'open' ? (
+              <>
+                <button
+                  className="btn-primary"
+                  onClick={handleClickCloseReward}
+                  style={{
+                    width: '100%',
+                    maxWidth: '240px',
+                    backgroundColor: '#06D6A0',
+                    position: 'relative',
+                    overflow: 'visible',
+                    transform: isCloseRewardPress ? 'translateY(4px)' : undefined,
+                    boxShadow: isCloseRewardPress ? '0 2px 0 #4D3834' : '0 6px 0 #4D3834',
+                  }}
+                >
+                  {isAutoMode && chestState === 'open' && !showLevelUpModal && (
+                    <AutoClickStroke duration={3} onComplete={handleAutoCloseRewardComplete} strokeColor="#036B50" />
+                  )}
+                  <span style={{ position: 'relative', zIndex: 2 }}>{rewardButtonText}</span>
+                </button>
+                {/* Transparent text placeholder to match vertical height spacing */}
+                <div
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    color: 'transparent',
+                    marginTop: '6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                  }}
+                >
+                  hold for auto
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  className="btn-primary"
+                  onMouseDown={handleHoldStart}
+                  onTouchStart={handleHoldStart}
+                  onMouseUp={handleHoldEnd}
+                  onMouseLeave={handleHoldEnd}
+                  onTouchEnd={handleHoldEnd}
+                  onClick={handleClickOpenBox}
+                  disabled={chestState === 'opening'}
+                  style={{
+                    width: '100%',
+                    maxWidth: '240px',
+                    position: 'relative',
+                    overflow: 'hidden', // Contain the background progress fill div
+                    backgroundColor: isAutoMode ? '#4EA8DE' : (energy < 1 ? '#dedede' : undefined), // Action blue when auto enabled
+                    color: isAutoMode ? '#FFFDF9' : undefined,
+                    boxShadow: isAutoMode
+                      ? (isOpenBoxPress ? '0 2px 0 #4D3834' : '0 6px 0 #4D3834')
+                      : (isOpenBoxPress ? '0 2px 0 #4D3834' : (energy < 1 ? '0 6px 0 #4D3834' : undefined)),
+                    transform: isOpenBoxPress ? 'translateY(4px)' : undefined,
+                  }}
+                >
+                  {/* Hold Progress Background Overlay (Translucent White) */}
+                  {isHolding && (
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: '100%' }}
+                      transition={{ duration: 1.2, ease: 'linear' }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                        zIndex: 1,
+                      }}
+                    />
+                  )}
+
+                  {/* Auto progress left-to-right background fill overlay (translucent white) */}
+                  {isAutoMode && chestState === 'idle' && !showLevelUpModal && (
+                    <motion.div
+                      key="auto-progress-fill"
+                      initial={{ width: 0 }}
+                      animate={{ width: '100%' }}
+                      transition={{ duration: 1, ease: 'linear' }}
+                      onAnimationComplete={handleAutoOpenBoxComplete}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                        zIndex: 1,
+                      }}
+                    />
+                  )}
+
+                  <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>OPEN BOX</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '16px' }}>
+                      <img src={energyIcon} alt="cost" style={{ width: '18px', height: '18px' }} />
+                      <span>x1</span>
+                    </div>
+                  </span>
+                </button>
+
+                {/* Hold for Auto Helper Text */}
+                <div
+                  onClick={() => {
+                    if (isAutoMode) {
+                      setAutoMode(false);
+                    }
+                  }}
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    color: '#8E7A75',
+                    marginTop: '6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    cursor: isAutoMode ? 'pointer' : 'default',
+                    pointerEvents: 'auto',
+                  }}
+                >
+                  {isAutoMode ? 'tap to stop' : 'hold for auto'}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Bottom slide drawer collection */}
         <CollectionDrawer
           isOpen={isCollectionOpen}
-          onToggle={() => setIsCollectionOpen(!isCollectionOpen)}
+          onToggle={() => {
+            setAutoMode(false);
+            setIsCollectionOpen(!isCollectionOpen);
+          }}
         />
 
         {/* Modal: Store overlays */}
-        <StoreModal isOpen={isStoreOpen} onClose={() => setIsStoreOpen(false)} />
+        <StoreModal
+          isOpen={isStoreOpen}
+          onClose={() => setIsStoreOpen(false)}
+        />
 
         {/* Modal: Debug Operations cheat sheet */}
         {import.meta.env.VITE_DISABLE_DEBUG !== 'true' && (
-          <DebugPanel isOpen={isDebugOpen} onClose={() => setIsDebugOpen(false)} />
+          <DebugPanel
+            isOpen={isDebugOpen}
+            onClose={() => {
+              setIsDebugOpen(false);
+            }}
+          />
         )}
 
         {/* Modal: celebratory Level Up */}
@@ -915,6 +1187,8 @@ function App() {
           level={displayedLevel}
           onClose={() => setShowLevelUpModal(false)}
           triggerConfetti={triggerConfettiRain}
+          isAutoMode={isAutoMode}
+          setAutoMode={setAutoMode}
         />
       </div>
     </BoundingBox>

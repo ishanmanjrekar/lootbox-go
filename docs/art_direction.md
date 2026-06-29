@@ -8,6 +8,7 @@ This document details the visual guidelines, color systems, typography, animatio
 - [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - XP level requirements tables and drop distributions.
 - [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - Store actions, state schemas, and static file architectures.
 - [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - QA procedures and the секрет badge developer panel.
+- [Auto-Open Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md) - Details hold-to-activate automated box opening, button progress strokes, and stop conditions.
 
 ---
 

@@ -1,8 +1,8 @@
 {
-  "baseXP": 100,
-  "multiplier": 1.5,
-  "exponent": 1.2,
-  "formulaType": "exponential",
+  "formulaType": "custom_log_exponential",
+  "baseXP": 50,
+  "baseExponent": 1.493,
+  "logMultiplier": 0.22018,
   "levelVisuals": [
     { "level": 1, "tier": "Bronze", "badgeColor": "#cd7f32", "glow": "none" },
     { "level": 5, "tier": "Silver", "badgeColor": "#c0c0c0", "glow": "silver-pulse" },

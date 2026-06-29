@@ -19,10 +19,19 @@ export interface SkinReward {
 export type Reward = XPReward | SkinReward;
 
 export const getRequiredXpForLevel = (level: number): number => {
+  const config = progressionConfig as any;
+  if (config.formulaType === 'custom_log_exponential') {
+    const baseXP = config.baseXP ?? 50;
+    const baseExponent = config.baseExponent ?? 1.493;
+    const logMultiplier = config.logMultiplier ?? 0.22018;
+    const exponent = baseExponent + logMultiplier * Math.log(level);
+    return Math.floor(baseXP * Math.pow(level, exponent));
+  }
+
   if (level === 1) return 50;
-  const baseXP = progressionConfig.baseXP;
-  const exponent = progressionConfig.exponent;
-  const multiplier = progressionConfig.multiplier;
+  const baseXP = config.baseXP ?? 100;
+  const exponent = config.exponent ?? 1.2;
+  const multiplier = config.multiplier ?? 1.5;
   return Math.floor(baseXP * Math.pow(level, exponent) * multiplier);
 };
 
@@ -36,6 +45,7 @@ export interface GameState {
   activeBoxSkin: string;
   skinPityCount: number;
   onboardingStep: number;
+  isAutoMode: boolean;
 }
 
 export interface GameActions {
@@ -44,6 +54,7 @@ export interface GameActions {
   updateEnergyRecharge: () => void;
   buyEnergy: (amount: number, cost: number) => boolean;
   claimKoFiPinatas: () => void;
+  setAutoMode: (isAutoMode: boolean) => void;
   
   devCheatRefillEnergy: () => void;
   devCheatEmptyEnergy: () => void;
@@ -67,6 +78,7 @@ export const useGameStore = create<GameState & GameActions>()(
       activeBoxSkin: 'box-start',
       skinPityCount: 0,
       onboardingStep: 0,
+      isAutoMode: false,
 
       // Actions
       updateEnergyRecharge: () => {
@@ -166,7 +178,11 @@ export const useGameStore = create<GameState & GameActions>()(
             const baseSkinWeight = newLevel <= dropTablesConfig.pitySystem.earlyGameMaxLevel
               ? dropTablesConfig.pitySystem.earlyGameBaseWeight
               : dropTablesConfig.pitySystem.baseWeight;
-            skinWeight = baseSkinWeight + dropTablesConfig.pitySystem.weightIncrementPerMiss * skinPityCount;
+            const pitySystem = dropTablesConfig.pitySystem as any;
+            const pityIncrement = (pitySystem.earlyGameIncrementMaxLevel !== undefined && newLevel < pitySystem.earlyGameIncrementMaxLevel)
+              ? (pitySystem.earlyGameWeightIncrementPerMiss ?? pitySystem.weightIncrementPerMiss)
+              : pitySystem.weightIncrementPerMiss;
+            skinWeight = baseSkinWeight + pityIncrement * skinPityCount;
           }
 
           const xpDrops = dropTablesConfig.standardDropTable.filter((d) => d.id !== 'skin_unlock');
@@ -299,17 +315,25 @@ export const useGameStore = create<GameState & GameActions>()(
         }));
         get().updateEnergyRecharge();
       },
+
+      setAutoMode: (isAutoMode: boolean) => {
+        set({ isAutoMode });
+      },
     }),
     {
-      name: 'lootbox-go-save',
+      name: 'lootbox-go-save-v2',
+      partialize: (state) => {
+        const { isAutoMode, ...rest } = state;
+        return rest;
+      },
     }
   )
 );
 
 // Expose simulation helper on window for QA testing
 const simulateWeightedDrop = (simulatedPity: { count: number }) => {
-  const baseSkinWeight = 1;
-  const activeSkinWeight = baseSkinWeight + 3 * simulatedPity.count;
+  const baseSkinWeight = dropTablesConfig.pitySystem.baseWeight;
+  const activeSkinWeight = baseSkinWeight + dropTablesConfig.pitySystem.weightIncrementPerMiss * simulatedPity.count;
 
   const xpDrops = dropTablesConfig.standardDropTable.filter((d) => d.id !== 'skin_unlock');
   const xpWeightsSum = xpDrops.reduce((acc, curr) => acc + curr.weight, 0);

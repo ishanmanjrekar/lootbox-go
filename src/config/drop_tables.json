@@ -2,8 +2,10 @@
   "pitySystem": {
     "baseWeight": 1,
     "weightIncrementPerMiss": 3,
-    "earlyGameBaseWeight": 200,
-    "earlyGameMaxLevel": 5
+    "earlyGameBaseWeight": 20,
+    "earlyGameMaxLevel": 3,
+    "earlyGameWeightIncrementPerMiss": 20,
+    "earlyGameIncrementMaxLevel": 5
   },
   "onboardingRiggedSequence": [
     {

@@ -2,11 +2,15 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import progressionConfig from '../config/progression.json';
 
+import { AutoClickStroke } from './AutoClickStroke';
+
 interface LevelUpOverlayProps {
   isOpen: boolean;
   level: number;
   onClose: () => void;
   triggerConfetti: () => void;
+  isAutoMode: boolean;
+  setAutoMode: (val: boolean) => void;
 }
 
 export const LevelUpOverlay: React.FC<LevelUpOverlayProps> = ({
@@ -14,7 +18,25 @@ export const LevelUpOverlay: React.FC<LevelUpOverlayProps> = ({
   level,
   onClose,
   triggerConfetti,
+  isAutoMode,
+  setAutoMode,
 }) => {
+  const [isDismissPress, setIsDismissPress] = React.useState(false);
+
+  const handleDismissComplete = () => {
+    setIsDismissPress(true);
+    setTimeout(() => {
+      setIsDismissPress(false);
+      onClose();
+    }, 100);
+  };
+
+  const handleDismissClick = () => {
+    if (isAutoMode) {
+      setAutoMode(false);
+    }
+    onClose();
+  };
   // Trigger particle burst on mount
   useEffect(() => {
     if (isOpen) {
@@ -219,16 +241,22 @@ export const LevelUpOverlay: React.FC<LevelUpOverlayProps> = ({
             {/* Dismiss Button */}
             <button
               className="btn-primary"
-              onClick={onClose}
+              onClick={handleDismissClick}
               style={{
                 width: '100%',
                 fontSize: '18px',
                 backgroundColor: '#06D6A0',
-                boxShadow: '0 6px 0 #4D3834',
+                boxShadow: isDismissPress ? '0 2px 0 #4D3834' : '0 6px 0 #4D3834',
+                transform: isDismissPress ? 'translateY(4px)' : undefined,
                 padding: '16px',
+                position: 'relative',
+                overflow: 'visible',
               }}
             >
-              {dismissButtonText}
+              {isAutoMode && isOpen && (
+                <AutoClickStroke duration={4} onComplete={handleDismissComplete} strokeColor="#036B50" />
+              )}
+              <span style={{ position: 'relative', zIndex: 2 }}>{dismissButtonText}</span>
             </button>
           </motion.div>
         </motion.div>

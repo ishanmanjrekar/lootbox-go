@@ -4,10 +4,11 @@ This document details the visual style, design system tokens, screen structures,
 
 ### Related Documents
 - [Game Design Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/game_design.md) - Parody GDD, core gameplay loop, and progression systems.
-- [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Marshmallow styling pillars, typography, and visual assets guide.
+- [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Theme guidelines, color systems, and animation timing rules.
 - [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - Numeric formulas, starting values, and refill economics.
 - [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - Zustand state stores, actions, and persistent storage schemas.
 - [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - secret debug badge trigger, checklists, and simulation tools.
+- [Auto-Open Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md) - Details hold-to-activate automated box opening, button progress strokes, and stop conditions.
 
 ---
 
@@ -114,6 +115,10 @@ The application consists of a single-page app layout with a sticky HUD at the to
   - Text: `OPEN BOX` in pink comic font.
   - Icon: Yellow-orange fire icon with the text `x1` representing the energy cost.
   - Disables and turns grayscale when energy is 0.
+  - **Auto-Open Interaction Elements:**
+    - Displays a low-contrast helper text directly underneath. Reverts from `hold for auto` to `tap to stop` when automated loop is active.
+    - Press-and-hold (2s) animates background gradient to a solid mint green (`#06D6A0`).
+    - During automated countdowns, a high-contrast border stroke outline animates wrapping around the button's boundary.
 
 ### 3.2 Collection Screen View
 - Accessed by sliding up the bottom drawer.
@@ -180,6 +185,13 @@ Triggers when accumulated XP overflows the level requirement.
   - A giant "LEVEL UP!" title scales up, bounces, and shines with a gold gradient sweep.
   - Displays old level vs. new level.
   - Dismiss button: "Awesome! (Double XP next time?)" which closes the modal.
+
+### 4.4 Auto-Open Hold & Fill Animations
+- **Hold-to-Activate Background Fill:** Pressing and holding the "OPEN BOX" button fills its background with a solid mint green over exactly 2 seconds.
+- **Button Stroke Countdown:** 
+  - An SVG border outline progress animation wrapping around the active button (1-second duration, or 2-second duration on the Level Up dismiss button).
+  - Uses `stroke-dasharray` and `stroke-dashoffset` to wrap clockwise from the top-center back to top-center.
+  - A visual scale click (`scale: [1, 0.95, 1]`) plays when the stroke finishes, immediately firing the button action.
 
 ---
 

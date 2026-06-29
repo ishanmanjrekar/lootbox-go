@@ -8,6 +8,7 @@
 - [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - Detailed XP scaling formulas, pull expectations, and drop weights.
 - [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - Zustand state managers, persistence adapters, and offline calculation timings.
 - [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - SECRET badge tap panel, testing checklists, and statistical simulator script.
+- [Auto-Open Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md) - Details hold-to-activate automated box opening, button progress strokes, and stop conditions.
 
 ---
 
@@ -133,3 +134,11 @@ To maximize user retention and hook the player immediately, the first six rolls 
    * *Level Up:* Guaranteed to sum with Roll 3 and 5 to at least 100% of Level 2 required XP (344 XP), triggering a level up to Level 3.
 
 From **Roll 7 onward**, the game transitions to standard weight-based rolling using the dynamic pity system (using the Level $\le 5$ boosted skin weight of 200 until the player levels up to Level 6).
+
+---
+
+## 5. Feature Additions
+
+As new features are added to the game, their respective design and technical specifications are linked below.
+
+- **[Auto-Open Feature Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md):** Adds a hold-to-activate automated box opening loop with interactive delays, progress overlays, and context-dependent cancellation.

@@ -8,6 +8,7 @@ This document details the testing framework, debug panels, developer cheat codes
 - [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Cute visuals guides, font configurations, and animation settings.
 - [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - Mathematical progressions, drop probabilities, and pricing lists.
 - [Technical Architecture Document](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/architecture.md) - State management files, persistent data, and sleep timers.
+- [Auto-Open Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md) - Details hold-to-activate automated box opening, button progress strokes, and stop conditions.
 
 ---
 

@@ -8,6 +8,7 @@ This document outlines the software architecture, state management design, persi
 - [Art Direction Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/art_direction.md) - Sweet cream theme values, font imports, and Framer Motion squish specs.
 - [Economy & Balancing Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/economy_balancing.md) - XP growth tables, drop weight lists, and refill economics details.
 - [Testing & QA Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/testing_and_qa.md) - Secret panel debugging interface, test procedures, and simulator script.
+- [Auto-Open Specification](file:///c:/Users/ishan/Documents/GitHub/lootbox-go/docs/auto_open_spec.md) - Details hold-to-activate automated box opening, button progress strokes, and stop conditions.
 
 ---
 
@@ -75,6 +76,9 @@ interface GameState {
 
   // --- Onboarding ---
   onboardingStep: number; // 0 to 5 (rigged rolls 1 to 6), 6+ (standard game loop)
+
+  // --- Auto-Open ---
+  isAutoMode: boolean; // Indicates if the hold-to-activate automation loop is currently running
 }
 ```
 
