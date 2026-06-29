@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:web": "vite build",
-    "build:itch": "vite build --mode itch && cd dist && npx bestzip ../dump/game-upload.zip *",
-    "build:mobile": "vite build && npx cap sync",
+    "dev": "node scripts/update-assets.js && vite",
+    "build": "node scripts/update-assets.js && tsc -b && vite build",
+    "build:web": "node scripts/update-assets.js && vite build",
+    "build:itch": "node scripts/update-assets.js && vite build --mode itch && cd dist && npx bestzip ../dump/game-upload.zip *",
+    "build:mobile": "node scripts/update-assets.js && vite build && npx cap sync",
     "lint": "eslint .",
     "preview": "vite preview"
   },

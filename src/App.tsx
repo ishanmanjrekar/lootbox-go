@@ -8,6 +8,7 @@ import { DebugPanel } from './components/DebugPanel';
 import { StoreModal } from './components/StoreModal';
 import { CollectionDrawer } from './components/CollectionDrawer';
 import { LevelUpOverlay } from './components/LevelUpOverlay';
+import { SplashScreen } from './components/SplashScreen';
 import progressionConfig from './config/progression.json';
 import energyConfig from './config/energy.json';
 
@@ -37,6 +38,7 @@ const KAWAII_ONE_LINERS = [
   "Warning: Opening this box may trigger immediate satisfaction. 🌸✨"
 ];
 
+
 function App() {
   const {
     level,
@@ -50,6 +52,7 @@ function App() {
   } = useGameStore();
 
   // Dialog / Overlays State
+  const [isSplashActive, setIsSplashActive] = useState(true);
   const [timeLeftStr, setTimeLeftStr] = useState('');
   const [isDebugOpen, setIsDebugOpen] = useState(false);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
@@ -439,24 +442,13 @@ function App() {
 
   return (
     <BoundingBox width={450} height={800}>
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '16px',
-          boxSizing: 'border-box',
-          overflow: 'hidden',
-          backgroundColor: '#FFFDF9',
-          backgroundImage: 'radial-gradient(#FFEBF0 15%, transparent 16%)',
-          backgroundSize: '16px 16px',
-          border: '4px solid #4D3834',
-          borderRadius: '24px',
-        }}
-      >
+      <div className="game-container">
+        <AnimatePresence>
+          {isSplashActive && (
+            <SplashScreen onStart={() => setIsSplashActive(false)} />
+          )}
+        </AnimatePresence>
+
         {/* Particle Canvas Overlay Layer */}
         <canvas
           ref={canvasRef}

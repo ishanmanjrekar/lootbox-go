@@ -38,6 +38,21 @@ $EscapedSdkPath = $SdkDir.Replace("\", "\\")
 "sdk.dir=$EscapedSdkPath" | Out-File -FilePath $LocalPropertiesFile -Encoding ascii
 
 # -------------------------------------------------------------
+# 2.5 Purge All Web & Native Build Caches
+# -------------------------------------------------------------
+Write-Host "`n[1.5/5] Purging all web and native build caches..." -ForegroundColor Yellow
+$ProjectRootDir = Join-Path $PSScriptRoot ".."
+$DistDir = Join-Path $ProjectRootDir "dist"
+$CapacitorAssetsDir = Join-Path $ProjectRootDir "android\app\src\main\assets\public"
+$GradleCacheDir = Join-Path $ProjectRootDir "android\.gradle"
+$ViteCacheDir = Join-Path $ProjectRootDir "node_modules\.vite"
+
+if (Test-Path $DistDir) { Remove-Item -Path $DistDir -Recurse -Force -ErrorAction SilentlyContinue }
+if (Test-Path $CapacitorAssetsDir) { Remove-Item -Path $CapacitorAssetsDir -Recurse -Force -ErrorAction SilentlyContinue }
+if (Test-Path $GradleCacheDir) { Remove-Item -Path $GradleCacheDir -Recurse -Force -ErrorAction SilentlyContinue }
+if (Test-Path $ViteCacheDir) { Remove-Item -Path $ViteCacheDir -Recurse -Force -ErrorAction SilentlyContinue }
+
+# -------------------------------------------------------------
 # 3. Build Web Bundle
 # -------------------------------------------------------------
 Write-Host "`n[2/5] Compiling production web bundle..." -ForegroundColor Yellow
@@ -64,8 +79,8 @@ if (-not (Test-Path $AndroidDir)) {
 Push-Location $AndroidDir
 
 try {
-    # Run the Gradle assembleDebug task
-    & .\gradlew.bat assembleDebug
+    # Run the Gradle clean and assembleDebug tasks
+    & .\gradlew.bat clean assembleDebug
 } finally {
     # Always restore original directory location
     Pop-Location
@@ -75,7 +90,9 @@ try {
 # 6. Copy Finished APK to Dump Directory
 # -------------------------------------------------------------
 $BuiltApkPath = Join-Path $AndroidDir "app\build\outputs\apk\debug\app-debug.apk"
-$TargetApkPath = Join-Path $DumpDir "game-debug.apk"
+$Timestamp = Get-Date -Format "ddMMyy-HHmm"
+$TargetApkName = "lootboxgo-${Timestamp}-android.apk"
+$TargetApkPath = Join-Path $DumpDir $TargetApkName
 
 if (Test-Path $BuiltApkPath) {
     Write-Host "`n[5/5] Relocating APK to project dump/ folder..." -ForegroundColor Yellow
