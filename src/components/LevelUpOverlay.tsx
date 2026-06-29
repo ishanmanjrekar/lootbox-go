@@ -176,23 +176,25 @@ export const LevelUpOverlay: React.FC<LevelUpOverlayProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               {/* Old Level Badge */}
               <div
-                className="kawaii-panel"
+                className={`kawaii-panel shine-sweep-container badge-tier-${oldVisuals.tier.toLowerCase()}`}
                 style={{
                   width: '70px',
                   height: '70px',
                   borderRadius: '50%',
-                  backgroundColor: '#dedede',
                   borderColor: '#4D3834',
                   boxShadow: '0 4px 0 #4D3834',
                   padding: 0,
                   flexDirection: 'column',
                 }}
               >
+                <div className="shine-sweep-overlay" />
                 <span
                   style={{
                     fontFamily: 'var(--font-title)',
                     fontSize: '24px',
-                    color: oldVisuals.badgeColor,
+                    color: '#FFFDF9',
+                    position: 'relative',
+                    zIndex: 2,
                   }}
                   className="text-stroke-brown"
                 >
@@ -207,24 +209,26 @@ export const LevelUpOverlay: React.FC<LevelUpOverlayProps> = ({
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
-                className="kawaii-panel"
+                className={`kawaii-panel shine-sweep-container badge-tier-${currentVisuals.tier.toLowerCase()}`}
                 style={{
                   width: '90px',
                   height: '90px',
                   borderRadius: '50%',
-                  backgroundColor: '#FFFDF9',
-                  borderColor: currentVisuals.badgeColor,
-                  boxShadow: `0 6px 0 ${currentVisuals.badgeColor}`,
+                  borderColor: '#4D3834',
+                  boxShadow: '0 6px 0 #4D3834',
                   padding: 0,
                   flexDirection: 'column',
                   borderWidth: '4px',
                 }}
               >
+                <div className="shine-sweep-overlay" />
                 <span
                   style={{
                     fontFamily: 'var(--font-title)',
                     fontSize: '36px',
-                    color: currentVisuals.badgeColor,
+                    color: '#FFFDF9',
+                    position: 'relative',
+                    zIndex: 2,
                   }}
                   className="text-stroke-brown"
                 >

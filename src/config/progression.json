@@ -5,8 +5,9 @@
   "logMultiplier": 0.22018,
   "levelVisuals": [
     { "level": 1, "tier": "Bronze", "badgeColor": "#cd7f32", "glow": "none" },
-    { "level": 5, "tier": "Silver", "badgeColor": "#c0c0c0", "glow": "silver-pulse" },
-    { "level": 10, "tier": "Gold", "badgeColor": "#ffd700", "glow": "gold-sparkle" },
-    { "level": 25, "tier": "Diamond", "badgeColor": "#b9f2ff", "glow": "rainbow-shimmer" }
+    { "level": 4, "tier": "Silver", "badgeColor": "#c0c0c0", "glow": "silver-pulse" },
+    { "level": 8, "tier": "Gold", "badgeColor": "#ffd700", "glow": "gold-sparkle" },
+    { "level": 16, "tier": "Diamond", "badgeColor": "#b9f2ff", "glow": "rainbow-shimmer" },
+    { "level": 31, "tier": "Cosmic", "badgeColor": "#240046", "glow": "cosmic-glow" }
   ]
 }

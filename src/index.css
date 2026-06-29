@@ -199,40 +199,49 @@ button {
 
 @keyframes silver-pulse {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
+    box-shadow: 0 0 10px rgba(192, 192, 192, 0.4), 0 3px 0 var(--border-color);
   }
   50% {
-    box-shadow: 0 0 25px rgba(192, 192, 192, 0.8);
+    box-shadow: 0 0 25px rgba(192, 192, 192, 0.8), 0 3px 0 var(--border-color);
   }
 }
 
 @keyframes gold-sparkle {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 3px 0 var(--border-color);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.9), 0 3px 0 var(--border-color);
   }
 }
 
 @keyframes rainbow-shimmer {
   0% {
-    box-shadow: 0 0 10px rgba(255, 198, 255, 0.6);
+    box-shadow: 0 0 10px rgba(255, 198, 255, 0.6), 0 3px 0 var(--border-color);
     border-color: #ffc6ff;
   }
   25% {
     border-color: #ffd166;
   }
   50% {
-    box-shadow: 0 0 30px rgba(162, 210, 255, 0.9);
+    box-shadow: 0 0 30px rgba(162, 210, 255, 0.9), 0 3px 0 var(--border-color);
     border-color: #a2d2ff;
   }
   75% {
     border-color: #d8b4f8;
   }
   100% {
-    box-shadow: 0 0 10px rgba(255, 198, 255, 0.6);
+    box-shadow: 0 0 10px rgba(255, 198, 255, 0.6), 0 3px 0 var(--border-color);
     border-color: #ffc6ff;
+  }
+}
+
+@keyframes cosmic-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(157, 78, 221, 0.6), 0 3px 0 var(--border-color);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(224, 170, 255, 0.95), 0 3px 0 var(--border-color);
   }
 }
 
@@ -246,6 +255,83 @@ button {
 
 .rainbow-shimmer {
   animation: rainbow-shimmer 4s infinite linear;
+}
+
+.cosmic-glow {
+  animation: cosmic-glow 2s infinite ease-in-out;
+}
+
+/* Gradients for Level Badge Tiers */
+.badge-tier-bronze {
+  background: linear-gradient(135deg, #a75d31 0%, #cd7f32 50%, #ffd2b9 75%, #a75d31 100%) !important;
+}
+
+.badge-tier-silver {
+  background: linear-gradient(135deg, #707070 0%, #c0c0c0 50%, #ffffff 75%, #707070 100%) !important;
+}
+
+.badge-tier-gold {
+  background: linear-gradient(135deg, #b38600 0%, #ffd700 50%, #fff2a3 75%, #b38600 100%) !important;
+}
+
+.badge-tier-diamond {
+  background: linear-gradient(135deg, #70d6ff 0%, #ff70a6 25%, #ff9770 50%, #ffd670 75%, #e9ff70 100%) !important;
+  background-size: 200% 200% !important;
+  animation: rainbow-shimmer 4s infinite linear, rainbow-shimmer-bg 6s linear infinite !important;
+}
+
+.badge-tier-cosmic {
+  background: linear-gradient(135deg, #120024 0%, #3c096c 35%, #7b2cbf 70%, #9d4edd 100%) !important;
+  background-size: 300% 300% !important;
+  animation: cosmic-glow 2s infinite ease-in-out, cosmic-shimmer-bg 8s ease infinite !important;
+}
+
+/* Shine sweep effect */
+.shine-sweep-container {
+  position: relative;
+  overflow: hidden !important;
+}
+
+.shine-sweep-overlay {
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 1;
+  animation: shine-sweep 3.5s infinite ease-in-out;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -150%;
+  }
+  30% {
+    left: 150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+@keyframes rainbow-shimmer-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes cosmic-shimmer-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Starburst & Sparkles for New Skin Unlocks */

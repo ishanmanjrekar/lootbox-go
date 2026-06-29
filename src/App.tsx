@@ -65,7 +65,7 @@ function App() {
 
   // Hold-to-Auto and Visual Press State
   const [isHolding, setIsHolding] = useState(false);
-  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const holdTimerRef = useRef<any>(null);
   const holdStartRef = useRef<number>(0);
   const holdTriggeredRef = useRef(false);
   const justActivatedAutoModeRef = useRef(false);
@@ -424,7 +424,7 @@ function App() {
   };
 
   // --- Auto-Open Timer & Action Handlers ---
-  const handleHoldStart = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleHoldStart = (_e: React.MouseEvent | React.TouchEvent) => {
     if (chestState !== 'idle') return;
 
     // Reset flags if starting a fresh manual interaction
@@ -740,9 +740,12 @@ function App() {
               </span>
 
               {/* LEVEL TEXT BADGE (TRIPLE TAP DETECTOR) */}
-              <div
+              <motion.div
+                key={displayedLevel}
                 onClick={handleLevelBadgeTap}
-                className={currentTierInfo.glow !== 'none' ? currentTierInfo.glow : ''}
+                animate={{ scale: [1, 1.25, 1] }}
+                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                className={`shine-sweep-container badge-tier-${currentTierInfo.tier.toLowerCase()} ${currentTierInfo.glow !== 'none' ? currentTierInfo.glow : ''}`}
                 style={{
                   fontFamily: 'var(--font-title)',
                   fontSize: '16px',
@@ -751,16 +754,15 @@ function App() {
                   border: `2px solid #4D3834`,
                   borderRadius: '12px',
                   padding: '4px 12px',
-                  backgroundColor: currentTierInfo.badgeColor,
-                  boxShadow: '0 3px 0 #4D3834',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   textShadow: '1px 1px 0px #4D3834, -1px -1px 0px #4D3834, 1px -1px 0px #4D3834, -1px 1px 0px #4D3834',
                 }}
               >
-                <span>LEVEL {displayedLevel}</span>
-              </div>
+                <div className="shine-sweep-overlay" />
+                <span style={{ position: 'relative', zIndex: 2 }}>LEVEL {displayedLevel}</span>
+              </motion.div>
             </div>
           </div>
         </div>
