@@ -25,14 +25,16 @@ export const getRequiredXpForLevel = (level: number): number => {
     const baseExponent = config.baseExponent ?? 1.493;
     const logMultiplier = config.logMultiplier ?? 0.22018;
     const exponent = baseExponent + logMultiplier * Math.log(level);
-    return Math.floor(baseXP * Math.pow(level, exponent));
+    const rawXP = baseXP * Math.pow(level, exponent);
+    return Math.max(50, Math.round(rawXP / 50) * 50);
   }
 
   if (level === 1) return 50;
   const baseXP = config.baseXP ?? 100;
   const exponent = config.exponent ?? 1.2;
   const multiplier = config.multiplier ?? 1.5;
-  return Math.floor(baseXP * Math.pow(level, exponent) * multiplier);
+  const rawXP = baseXP * Math.pow(level, exponent) * multiplier;
+  return Math.max(50, Math.round(rawXP / 50) * 50);
 };
 
 export interface GameState {
